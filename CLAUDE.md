@@ -65,6 +65,9 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - `mode=test` では `vite.config.ts` のプラグインを `react()` のみにしている（Hono dev サーバ等を起動しないため）
   - **ページのテストは `app/stories/` にストーリーと並べて置く**（`app/pages` 配下は不可。理由はストーリーと同じ）。`@inertiajs/react` は `test.alias` で Storybook と同じ `.storybook/mocks/inertia.tsx` に差し替わる。`router.*` の検証はモックを相対パスで直接 import して行う（`@inertiajs/react` 経由だと実型のメソッドになり `unbound-method` に掛かる）
   - URL（`history.replaceState`）と mock の呼び出し履歴は `src/test/setup.ts` でテストごとにリセットしている
+- テストは Vitest の projects で 2 つに分かれる（`vp test run --project client|server` で個別実行可）:
+  - `client`（jsdom）: 上記のコンポーネント・ページのテスト
+  - `server`（node）: `app/*.test.ts`。Hono の `app.request(path, init, { UNBIND_KV })` でルートを叩く。`X-Inertia: true` を付けるとページオブジェクト（`{ component, props, url, version }`）が JSON で返るので、それを検証する。KV は `app/test/fake-kv.ts` のインメモリ実装（`raw` / `failOnGet` で破損データや I/O エラーも再現できる）
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
 
 ## 運用
