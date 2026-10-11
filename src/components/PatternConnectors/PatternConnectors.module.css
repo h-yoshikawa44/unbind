@@ -8,32 +8,32 @@
 .tick {
   position: absolute;
   width: 0;
-  border-left: 1.5px solid var(--idiom-color);
+  border-left: 1.5px solid var(--pattern-color);
   transform: translateX(-0.75px);
 }
 
 .segment {
   position: absolute;
   height: 0;
-  border-top: 1.5px solid var(--idiom-color);
+  border-top: 1.5px solid var(--pattern-color);
   transform: translateY(-0.75px);
 }
 
 /* 前の行から続く／次の行へ続く側は、端に向かって薄くする。 */
 .segmentOpenStart {
-  border-image: linear-gradient(to right, transparent, var(--idiom-color) 12px) 1;
+  border-image: linear-gradient(to right, transparent, var(--pattern-color) 12px) 1;
 }
 
 .segmentOpenEnd {
-  border-image: linear-gradient(to left, transparent, var(--idiom-color) 12px) 1;
+  border-image: linear-gradient(to left, transparent, var(--pattern-color) 12px) 1;
 }
 
 .segmentOpenStart.segmentOpenEnd {
   border-image: linear-gradient(
       to right,
       transparent,
-      var(--idiom-color) 12px,
-      var(--idiom-color) calc(100% - 12px),
+      var(--pattern-color) 12px,
+      var(--pattern-color) calc(100% - 12px),
       transparent
     )
     1;
@@ -51,9 +51,9 @@
   padding: 1px 8px 1px 2px;
   border-radius: 0.75rem;
   text-align: left;
-  border: 1px solid var(--idiom-border);
+  border: 1px solid var(--pattern-border);
   background: var(--surface);
-  color: var(--idiom-color);
+  color: var(--pattern-color);
   font-size: 0.7rem;
   font-family: system-ui, sans-serif;
   font-weight: 600;
@@ -66,12 +66,12 @@
     border-color 0.15s;
 
   &:hover:not(:disabled) {
-    background: var(--idiom-bg);
-    border-color: var(--idiom-color);
+    background: var(--pattern-bg);
+    border-color: var(--pattern-color);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--idiom-color);
+    outline: 2px solid var(--pattern-color);
     outline-offset: 2px;
   }
 
@@ -80,16 +80,16 @@
   }
 }
 
-/* 編集中の慣用句。ラベルを塗り、線を太くする。 */
+/* 編集中のパターン。ラベルを塗り、線を太くする。 */
 .labelActive,
 .labelActive:hover:not(:disabled) {
-  background: var(--idiom-color);
-  border-color: var(--idiom-color);
+  background: var(--pattern-color);
+  border-color: var(--pattern-color);
   color: #fff;
 
   & .labelNumber {
     background: #fff;
-    color: var(--idiom-color);
+    color: var(--pattern-color);
   }
 }
 
@@ -111,7 +111,7 @@
   min-width: 1.1rem;
   height: 1.1rem;
   border-radius: 999px;
-  background: var(--idiom-color);
+  background: var(--pattern-color);
   color: #fff;
   font-size: 0.62rem;
   font-weight: 700;

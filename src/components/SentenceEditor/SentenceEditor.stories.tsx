@@ -3,8 +3,8 @@ import { fn } from 'storybook/test';
 import { SentenceEditor } from '@/components/SentenceEditor/SentenceEditor';
 import {
   analyzedSentence,
-  idiomSentence,
-  multiIdiomSentence,
+  patternSentence,
+  multiPatternSentence,
   sampleTags,
   unanalyzedSentence,
 } from '@/fixtures/sentences';
@@ -29,20 +29,20 @@ export const Unanalyzed: Story = {
   args: { sentence: unanalyzedSentence },
 };
 
-/** 隣接していない単語（turn ... off）を慣用句として登録済み。 */
-export const WithIdiom: Story = {
-  args: { sentence: idiomSentence },
+/** 隣接していない単語（turn ... off）をパターンとして登録済み。 */
+export const WithPattern: Story = {
+  args: { sentence: patternSentence },
 };
 
-/** 慣用句が重なり合う（連結線を段に分けて描く）。画面幅を狭めると行をまたぐ線も確認できる。 */
-export const MultipleIdioms: Story = {
-  args: { sentence: multiIdiomSentence },
+/** パターンが重なり合う（連結線を段に分けて描く）。画面幅を狭めると行をまたぐ線も確認できる。 */
+export const MultiplePatterns: Story = {
+  args: { sentence: multiPatternSentence },
 };
 
-/** 線上のラベルをクリックして、慣用句の意味の入力パネルを開いた状態。 */
-export const IdiomPanelOpened: Story = {
-  args: { sentence: multiIdiomSentence },
+/** 線上のラベルをクリックして、パターンの意味の入力パネルを開いた状態。 */
+export const PatternPanelOpened: Story = {
+  args: { sentence: multiPatternSentence },
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: '慣用句「turned … off」を編集' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'パターン「turned … off」を編集' }));
   },
 };

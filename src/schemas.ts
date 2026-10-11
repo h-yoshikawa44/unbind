@@ -10,7 +10,7 @@
  * - server.tsx: クライアントから来るリクエストボディの検証（@hono/zod-validator）
  */
 import { z } from 'zod';
-import type { Idiom, Sentence, TokenWithAnalysis } from '@/types';
+import type { Pattern, Sentence, TokenWithAnalysis } from '@/types';
 import {
   INFINITIVE_USAGE_VALUES,
   NOUN_FORM_VALUES,
@@ -38,19 +38,19 @@ export const tokenWithAnalysisSchema = z.object({
   idiomMeaning: z.string(),
 }) satisfies z.ZodType<TokenWithAnalysis>;
 
-/** 慣用句（Idiom 相当）。構成トークンは 1 つ以上。 */
-export const idiomSchema = z.object({
+/** パターン（Pattern 相当）。構成トークンは 1 つ以上。 */
+export const patternSchema = z.object({
   id: z.string(),
   tokenIds: z.array(z.string()).min(1),
   meaning: z.string(),
-}) satisfies z.ZodType<Idiom>;
+}) satisfies z.ZodType<Pattern>;
 
 /** 英文エンティティ（Sentence 相当）。 */
 export const sentenceSchema = z.object({
   id: z.string(),
   text: z.string(),
   tokens: z.array(tokenWithAnalysisSchema),
-  idioms: z.array(idiomSchema),
+  patterns: z.array(patternSchema),
   naturalTranslation: z.string(),
   tags: z.array(z.string()),
   createdAt: z.string(),
@@ -59,7 +59,7 @@ export const sentenceSchema = z.object({
 
 /**
  * data.json から読み込む際のスキーマ。
- * 後から追加した naturalTranslation / tags / idioms / トークンの infinitiveUsage は古いデータに存在しないため、
+ * 後から追加した naturalTranslation / tags / patterns / トークンの infinitiveUsage は古いデータに存在しないため、
  * 既定値で補完する（従来 store.ts の loadAll が手動で行っていた補完に相当）。
  */
 const storedTokenSchema = tokenWithAnalysisSchema.extend({
@@ -68,7 +68,7 @@ const storedTokenSchema = tokenWithAnalysisSchema.extend({
 
 export const storedSentenceSchema = sentenceSchema.extend({
   tokens: z.array(storedTokenSchema),
-  idioms: z.array(idiomSchema).default([]),
+  patterns: z.array(patternSchema).default([]),
   naturalTranslation: z.string().default(''),
   tags: z.array(z.string()).default([]),
 });
@@ -83,18 +83,18 @@ export const createSentenceBodySchema = z.object({
   tags: z.array(z.string()),
 });
 
-/** PUT /sentences/:id のリクエストボディ。慣用句は同じボディ内のトークンだけを参照できる。 */
+/** PUT /sentences/:id のリクエストボディ。パターンは同じボディ内のトークンだけを参照できる。 */
 export const updateSentenceBodySchema = z
   .object({
     tokens: z.array(tokenWithAnalysisSchema),
-    idioms: z.array(idiomSchema),
+    patterns: z.array(patternSchema),
     naturalTranslation: z.string(),
     tags: z.array(z.string()),
   })
   .refine(
-    ({ tokens, idioms }) => {
+    ({ tokens, patterns }) => {
       const tokenIds = new Set(tokens.map((t) => t.id));
-      return idioms.every((idiom) => idiom.tokenIds.every((id) => tokenIds.has(id)));
+      return patterns.every((pattern) => pattern.tokenIds.every((id) => tokenIds.has(id)));
     },
-    { message: '慣用句が存在しないトークンを参照しています', path: ['idioms'] },
+    { message: 'パターンが存在しないトークンを参照しています', path: ['patterns'] },
   );

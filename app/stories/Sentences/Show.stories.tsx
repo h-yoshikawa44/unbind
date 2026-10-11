@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import Show from '../../pages/Sentences/Show';
 import {
   analyzedSentence,
-  idiomSentence,
+  patternSentence,
   sampleTags,
   unanalyzedSentence,
 } from '@/fixtures/sentences';
@@ -26,8 +26,8 @@ export const Unanalyzed: Story = {
   args: { sentence: unanalyzedSentence },
 };
 
-export const WithIdiom: Story = {
-  args: { sentence: idiomSentence },
+export const WithPattern: Story = {
+  args: { sentence: patternSentence },
 };
 
 export const NotFound: Story = {

@@ -71,7 +71,7 @@ const app = new Hono<{ Bindings: Bindings }>()
     );
     return c.redirect(`/sentences/${sentence.id}`, 303);
   })
-  // 英文のトークン分析データ・慣用句を更新する。
+  // 英文のトークン分析データ・パターンを更新する。
   .put('/sentences/:id', zValidator('json', updateSentenceBodySchema), async (c) => {
     const id = c.req.param('id');
     const body = c.req.valid('json');
@@ -79,7 +79,7 @@ const app = new Hono<{ Bindings: Bindings }>()
       c.env.UNBIND_KV,
       id,
       body.tokens,
-      body.idioms,
+      body.patterns,
       body.naturalTranslation,
       body.tags,
     );

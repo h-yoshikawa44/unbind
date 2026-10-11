@@ -1,9 +1,9 @@
 /**
- * 慣用句の連結線（トークンチップの下に引くブラケット状の線）の配置計算。
+ * パターンの連結線（トークンチップの下に引くブラケット状の線）の配置計算。
  *
- * DOM に依存しない純粋関数にしておき、計測（useIdiomConnectors）と描画（IdiomConnectors）から分離する。
+ * DOM に依存しない純粋関数にしておき、計測（usePatternConnectors）と描画（PatternConnectors）から分離する。
  */
-import type { Idiom, Token } from '@/types';
+import type { Pattern, Token } from '@/types';
 
 /** 連結線を描く領域を基準にしたチップの位置・大きさ（px）。 */
 export interface ChipBox {
@@ -13,10 +13,10 @@ export interface ChipBox {
   height: number;
 }
 
-/** 慣用句の線（1 行ぶん）。行をまたぐ慣用句は行ごとに分かれ、続きがある側を open にする。 */
+/** パターンの線（1 行ぶん）。行をまたぐパターンは行ごとに分かれ、続きがある側を open にする。 */
 export interface ConnectorSegment {
   key: string;
-  idiomId: string;
+  patternId: string;
   x1: number;
   x2: number;
   y: number;
@@ -27,7 +27,7 @@ export interface ConnectorSegment {
 /** チップの下端から線までの縦線。 */
 export interface ConnectorTick {
   key: string;
-  idiomId: string;
+  patternId: string;
   x: number;
   y1: number;
   y2: number;
@@ -41,7 +41,7 @@ export interface LabelSize {
 
 /** 線の上に載せる意味のラベル。 */
 export interface ConnectorLabel {
-  idiomId: string;
+  patternId: string;
   number: number;
   meaning: string;
   x: number;
@@ -79,7 +79,7 @@ export const EMPTY_LAYOUT: ConnectorLayout = {
 
 /** 行ごとの線を引くための中間データ。 */
 interface RowPart {
-  idiom: Idiom;
+  pattern: Pattern;
   number: number;
   row: number;
   centers: { tokenId: string; x: number; bottom: number }[];
@@ -87,26 +87,26 @@ interface RowPart {
   x2: number;
   openStart: boolean;
   openEnd: boolean;
-  /** ラベルを載せる部分か（慣用句の最初の行）。 */
+  /** ラベルを載せる部分か（パターンの最初の行）。 */
   hasLabel: boolean;
   lane: number;
 }
 
 /**
- * labelSizes は描画済みラベルの実寸（慣用句 ID ごと）。意味が 2 行に折り返したラベルの高さ・幅に合わせて
+ * labelSizes は描画済みラベルの実寸（パターン ID ごと）。意味が 2 行に折り返したラベルの高さ・幅に合わせて
  * 段の間隔と重なり判定を行う。未計測のラベルは DEFAULT_LABEL_SIZE とみなす。
  */
-export function layoutIdiomConnectors(
-  idioms: readonly Idiom[],
+export function layoutPatternConnectors(
+  patterns: readonly Pattern[],
   tokens: readonly Token[],
   boxes: ReadonlyMap<string, ChipBox>,
   width: number,
   labelSizes: ReadonlyMap<string, LabelSize> = new Map(),
 ): ConnectorLayout {
-  const labelSize = (idiomId: string) => labelSizes.get(idiomId) ?? DEFAULT_LABEL_SIZE;
+  const labelSize = (patternId: string) => labelSizes.get(patternId) ?? DEFAULT_LABEL_SIZE;
   /** ラベルの中心を置ける範囲に寄せる（領域の端からはみ出さないように）。 */
-  const clampLabelX = (x: number, idiomId: string) => {
-    const half = labelSize(idiomId).width / 2;
+  const clampLabelX = (x: number, patternId: string) => {
+    const half = labelSize(patternId).width / 2;
     return Math.min(Math.max(x, half), Math.max(width - half, half));
   };
 
@@ -124,11 +124,11 @@ export function layoutIdiomConnectors(
     prevLeft = box.left;
   }
 
-  // 慣用句を行ごとの部分に分ける。
+  // パターンを行ごとの部分に分ける。
   const parts: RowPart[] = [];
-  idioms.forEach((idiom, i) => {
+  patterns.forEach((pattern, i) => {
     const byRow = new Map<number, RowPart['centers']>();
-    for (const tokenId of idiom.tokenIds) {
+    for (const tokenId of pattern.tokenIds) {
       const box = boxes.get(tokenId);
       const row = rowOf.get(tokenId);
       if (!box || row === undefined) continue;
@@ -142,7 +142,7 @@ export function layoutIdiomConnectors(
       const openStart = row !== rows[0];
       const openEnd = row !== rows[rows.length - 1];
       parts.push({
-        idiom,
+        pattern,
         number: i + 1,
         row,
         centers,
@@ -170,8 +170,8 @@ export function layoutIdiomConnectors(
       let end = part.x2;
       // ラベルを中央に置くため、短い線でもラベル幅ぶんは占有しているとみなす。
       if (part.hasLabel) {
-        const half = labelSize(part.idiom.id).width / 2;
-        const x = clampLabelX((part.x1 + part.x2) / 2, part.idiom.id);
+        const half = labelSize(part.pattern.id).width / 2;
+        const x = clampLabelX((part.x1 + part.x2) / 2, part.pattern.id);
         start = Math.min(start, x - half);
         end = Math.max(end, x + half);
       }
@@ -189,7 +189,7 @@ export function layoutIdiomConnectors(
   // ラベルは線の上に縦中央で載るので、1 段目はラベルの上半分がチップに掛からない位置まで下げる。
   const labelHeight = Math.max(
     DEFAULT_LABEL_SIZE.height,
-    ...parts.filter((p) => p.hasLabel).map((p) => labelSize(p.idiom.id).height),
+    ...parts.filter((p) => p.hasLabel).map((p) => labelSize(p.pattern.id).height),
   );
   const laneOffset = Math.max(LANE_OFFSET, labelHeight / 2 + 4);
   const laneHeight = Math.max(LANE_HEIGHT, labelHeight + LANE_PADDING);
@@ -201,10 +201,10 @@ export function layoutIdiomConnectors(
   const layout: ConnectorLayout = { segments: [], ticks: [], labels: [], laneCount, space };
   for (const part of parts) {
     const y = rowBottoms[part.row] + laneOffset + part.lane * laneHeight;
-    const key = `${part.idiom.id}-${part.row}`;
+    const key = `${part.pattern.id}-${part.row}`;
     layout.segments.push({
       key,
-      idiomId: part.idiom.id,
+      patternId: part.pattern.id,
       x1: part.x1,
       x2: part.x2,
       y,
@@ -213,20 +213,20 @@ export function layoutIdiomConnectors(
     });
     for (const c of part.centers) {
       layout.ticks.push({
-        key: `${part.idiom.id}-${c.tokenId}`,
-        idiomId: part.idiom.id,
+        key: `${part.pattern.id}-${c.tokenId}`,
+        patternId: part.pattern.id,
         x: c.x,
         y1: c.bottom,
         y2: y,
       });
     }
-    // ラベルは慣用句の最初の行に 1 つだけ置く。
+    // ラベルはパターンの最初の行に 1 つだけ置く。
     if (part.hasLabel) {
       layout.labels.push({
-        idiomId: part.idiom.id,
+        patternId: part.pattern.id,
         number: part.number,
-        meaning: part.idiom.meaning,
-        x: clampLabelX((part.x1 + part.x2) / 2, part.idiom.id),
+        meaning: part.pattern.meaning,
+        x: clampLabelX((part.x1 + part.x2) / 2, part.pattern.id),
         y,
       });
     }

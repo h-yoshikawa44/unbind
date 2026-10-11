@@ -1,19 +1,19 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
-import type { Idiom, Token } from '@/types';
-import type { ChipBox, ConnectorLayout, LabelSize } from '@/components/IdiomConnectors/layout';
-import { EMPTY_LAYOUT, layoutIdiomConnectors } from '@/components/IdiomConnectors/layout';
-import { idiomText } from '@/idioms';
-import styles from '@/components/IdiomConnectors/IdiomConnectors.module.css';
+import type { Pattern, Token } from '@/types';
+import type { ChipBox, ConnectorLayout, LabelSize } from '@/components/PatternConnectors/layout';
+import { EMPTY_LAYOUT, layoutPatternConnectors } from '@/components/PatternConnectors/layout';
+import { patternText } from '@/patterns';
+import styles from '@/components/PatternConnectors/PatternConnectors.module.css';
 
 /**
- * トークンチップの位置を計測して、慣用句の連結線の配置を求める。
+ * トークンチップの位置を計測して、パターンの連結線の配置を求める。
  *
  * - containerRef: チップと連結線を包む要素（position: relative。チップの offset はここを基準に測る）
  * - chipRef(id): 各チップに渡す ref コールバック
  * - listStyle: 連結線を描く余白（行間・下余白）を確保するためにトークン一覧へ当てるスタイル
  */
-export function useIdiomConnectors(idioms: readonly Idiom[], tokens: readonly Token[]) {
+export function usePatternConnectors(patterns: readonly Pattern[], tokens: readonly Token[]) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chips = useRef(new Map<string, HTMLElement>());
   const [layout, setLayout] = useState<ConnectorLayout>(EMPTY_LAYOUT);
@@ -41,13 +41,19 @@ export function useIdiomConnectors(idioms: readonly Idiom[], tokens: readonly To
     }
     // ラベルは意味の長さで幅が変わり、2 行に折り返すと高さも変わる。描画済みの実寸を段組みに使う。
     const labelSizes = new Map<string, LabelSize>();
-    for (const el of container.querySelectorAll<HTMLElement>('[data-idiom-label]')) {
-      const idiomId = el.dataset.idiomLabel;
-      if (idiomId) labelSizes.set(idiomId, { width: el.offsetWidth, height: el.offsetHeight });
+    for (const el of container.querySelectorAll<HTMLElement>('[data-pattern-label]')) {
+      const patternId = el.dataset.patternLabel;
+      if (patternId) labelSizes.set(patternId, { width: el.offsetWidth, height: el.offsetHeight });
     }
-    const next = layoutIdiomConnectors(idioms, tokens, boxes, container.clientWidth, labelSizes);
+    const next = layoutPatternConnectors(
+      patterns,
+      tokens,
+      boxes,
+      container.clientWidth,
+      labelSizes,
+    );
     setLayout((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next));
-  }, [idioms, tokens]);
+  }, [patterns, tokens]);
 
   // 配置が変わると新しいラベルが描画されるので、その実寸で測り直す（大きさが変わらなければ配置も変わらず止まる）。
   useLayoutEffect(() => {
@@ -76,21 +82,27 @@ export function useIdiomConnectors(idioms: readonly Idiom[], tokens: readonly To
 
 interface Props {
   layout: ConnectorLayout;
-  idioms: readonly Idiom[];
+  patterns: readonly Pattern[];
   tokens: readonly Token[];
-  /** 編集中（パネルを開いている）慣用句の ID。線とラベルを強調する。 */
-  activeIdiomId: string | null;
+  /** 編集中（パネルを開いている）パターンの ID。線とラベルを強調する。 */
+  activePatternId: string | null;
   /** ラベルのクリック。未指定（選択モード中など）ならラベルを押せなくする。 */
-  onLabelClick?: (idiomId: string) => void;
+  onLabelClick?: (patternId: string) => void;
 }
 
 /**
- * 慣用句の連結線と意味のラベル。
- * 線は装飾なので支援技術から隠し、ラベルは慣用句を編集するボタンとして公開する。
+ * パターンの連結線と意味のラベル。
+ * 線は装飾なので支援技術から隠し、ラベルはパターンを編集するボタンとして公開する。
  */
-export function IdiomConnectors({ layout, idioms, tokens, activeIdiomId, onLabelClick }: Props) {
-  const lineClass = (base: string, idiomId: string) =>
-    idiomId === activeIdiomId ? `${base} ${styles.lineActive}` : base;
+export function PatternConnectors({
+  layout,
+  patterns,
+  tokens,
+  activePatternId,
+  onLabelClick,
+}: Props) {
+  const lineClass = (base: string, patternId: string) =>
+    patternId === activePatternId ? `${base} ${styles.lineActive}` : base;
 
   return (
     <div className={styles.connectors}>
@@ -98,12 +110,12 @@ export function IdiomConnectors({ layout, idioms, tokens, activeIdiomId, onLabel
         {layout.ticks.map((t) => (
           <span
             key={t.key}
-            className={lineClass(styles.tick, t.idiomId)}
+            className={lineClass(styles.tick, t.patternId)}
             style={{ left: t.x, top: t.y1, height: Math.max(t.y2 - t.y1, 0) }}
           />
         ))}
         {layout.segments.map((s) => {
-          const classes = [lineClass(styles.segment, s.idiomId)];
+          const classes = [lineClass(styles.segment, s.patternId)];
           if (s.openStart) classes.push(styles.segmentOpenStart);
           if (s.openEnd) classes.push(styles.segmentOpenEnd);
           return (
@@ -116,19 +128,19 @@ export function IdiomConnectors({ layout, idioms, tokens, activeIdiomId, onLabel
         })}
       </div>
       {layout.labels.map((l) => {
-        const idiom = idioms.find((i) => i.id === l.idiomId);
-        const text = idiom ? idiomText(idiom, tokens) : '';
-        const isActive = l.idiomId === activeIdiomId;
+        const pattern = patterns.find((i) => i.id === l.patternId);
+        const text = pattern ? patternText(pattern, tokens) : '';
+        const isActive = l.patternId === activePatternId;
         return (
           <button
-            key={l.idiomId}
-            data-idiom-label={l.idiomId}
+            key={l.patternId}
+            data-pattern-label={l.patternId}
             type="button"
             className={isActive ? `${styles.label} ${styles.labelActive}` : styles.label}
             style={{ left: l.x, top: l.y }}
-            onClick={() => onLabelClick?.(l.idiomId)}
+            onClick={() => onLabelClick?.(l.patternId)}
             disabled={!onLabelClick}
-            aria-label={`慣用句「${text}」を編集`}
+            aria-label={`パターン「${text}」を編集`}
             aria-pressed={isActive}
           >
             <span className={styles.labelNumber}>{l.number}</span>

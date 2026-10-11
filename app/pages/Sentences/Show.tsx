@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import type { PageProps } from '../../pages.gen';
-import type { Idiom, TokenWithAnalysis } from '@/types';
+import type { Pattern, TokenWithAnalysis } from '@/types';
 import { RootLayout } from '@/layouts/RootLayout';
 import { SentenceEditor } from '@/components/SentenceEditor/SentenceEditor';
 import { toPayload } from '@/inertia';
@@ -19,13 +19,13 @@ export default function Show({ sentence, tagSuggestions }: PageProps<'Sentences/
 
   const handleSave = (
     tokens: TokenWithAnalysis[],
-    idioms: Idiom[],
+    patterns: Pattern[],
     naturalTranslation: string,
     tags: string[],
   ) => {
     router.put(
       `/sentences/${sentence.id}`,
-      toPayload({ tokens, idioms, naturalTranslation, tags }),
+      toPayload({ tokens, patterns, naturalTranslation, tags }),
     );
   };
 

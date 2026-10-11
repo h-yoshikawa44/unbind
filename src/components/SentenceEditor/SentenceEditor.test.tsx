@@ -2,10 +2,10 @@ import { composeStories } from '@storybook/react-vite';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vite-plus/test';
-import { analyzedSentence, idiomSentence } from '@/fixtures/sentences';
+import { analyzedSentence, patternSentence } from '@/fixtures/sentences';
 import * as stories from '@/components/SentenceEditor/SentenceEditor.stories';
 
-const { Analyzed, Unanalyzed, WithIdiom } = composeStories(stories);
+const { Analyzed, Unanalyzed, WithPattern } = composeStories(stories);
 
 /**
  * トークンチップ（role="listitem" の button）を表示順に取り出す。
@@ -127,7 +127,7 @@ describe('SentenceEditor', () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: 'フレーズを作成' }));
+      await user.click(screen.getByRole('button', { name: '隣接フレーズを作成' }));
       expect(screen.getByText('グループ化したいトークンを選択してください')).toBeInTheDocument();
       // 選択中はバッジを出さない。
       expect(chip('I')).not.toHaveTextContent('代名詞');
@@ -137,7 +137,7 @@ describe('SentenceEditor', () => {
       await user.click(screen.getByRole('button', { name: 'グループ化' }));
 
       expect(chipTexts()).toEqual(['I', 'looked up', 'the', 'word', 'in a', 'dictionary.']);
-      expect(screen.getByRole('button', { name: 'フレーズを作成' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '隣接フレーズを作成' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: '保存' })).toBeEnabled();
     });
 
@@ -145,7 +145,7 @@ describe('SentenceEditor', () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: 'フレーズを作成' }));
+      await user.click(screen.getByRole('button', { name: '隣接フレーズを作成' }));
       await user.click(chip('I'));
       await user.click(chip('the'));
 
@@ -157,7 +157,7 @@ describe('SentenceEditor', () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: 'フレーズを作成' }));
+      await user.click(screen.getByRole('button', { name: '隣接フレーズを作成' }));
       await user.click(chip('in'));
       await user.click(chip('a'));
       await user.click(chip('a'));
@@ -177,124 +177,124 @@ describe('SentenceEditor', () => {
     });
   });
 
-  describe('慣用句', () => {
-    /** 連結線上の慣用句ラベル（クリックでパネルを開閉するボタン）。 */
-    function idiomLabel(text: string): HTMLElement {
-      return screen.getByRole('button', { name: `慣用句「${text}」を編集` });
+  describe('パターン', () => {
+    /** 連結線上のパターンラベル（クリックでパネルを開閉するボタン）。 */
+    function patternLabel(text: string): HTMLElement {
+      return screen.getByRole('button', { name: `パターン「${text}」を編集` });
     }
 
     // 連結線の位置は jsdom では計測できないため layout.test.ts で検証し、ここではラベルとパネルの振る舞いを確かめる。
-    it('連結線上に慣用句の意味のラベルを出し、意味の入力欄は最初は表示しない', () => {
-      render(<WithIdiom />);
-      expect(idiomLabel('turn … off.')).toHaveTextContent(idiomSentence.idioms[0].meaning);
-      expect(screen.queryByLabelText('慣用句としての意味')).not.toBeInTheDocument();
-      // 慣用句を構成していても、単語ごとの品詞・意味はそのまま表示する。
+    it('連結線上にパターンの意味のラベルを出し、意味の入力欄は最初は表示しない', () => {
+      render(<WithPattern />);
+      expect(patternLabel('turn … off.')).toHaveTextContent(patternSentence.patterns[0].meaning);
+      expect(screen.queryByLabelText('パターンの意味')).not.toBeInTheDocument();
+      // パターンを構成していても、単語ごとの品詞・意味はそのまま表示する。
       expect(chip('turn')).toHaveTextContent('動詞');
       expect(chip('turn')).toHaveTextContent('回す');
     });
 
     it('ラベルをクリックすると意味の入力パネルを開き、もう一度クリックすると閉じる', async () => {
       const user = userEvent.setup();
-      render(<WithIdiom />);
+      render(<WithPattern />);
 
-      await user.click(idiomLabel('turn … off.'));
-      expect(idiomLabel('turn … off.')).toHaveAttribute('aria-pressed', 'true');
-      expect(screen.getByLabelText('慣用句としての意味')).toHaveValue(
-        idiomSentence.idioms[0].meaning,
+      await user.click(patternLabel('turn … off.'));
+      expect(patternLabel('turn … off.')).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByLabelText('パターンの意味')).toHaveValue(
+        patternSentence.patterns[0].meaning,
       );
 
-      await user.click(idiomLabel('turn … off.'));
-      expect(idiomLabel('turn … off.')).toHaveAttribute('aria-pressed', 'false');
-      expect(screen.queryByLabelText('慣用句としての意味')).not.toBeInTheDocument();
+      await user.click(patternLabel('turn … off.'));
+      expect(patternLabel('turn … off.')).toHaveAttribute('aria-pressed', 'false');
+      expect(screen.queryByLabelText('パターンの意味')).not.toBeInTheDocument();
     });
 
-    it('慣用句のパネルとトークンの分析パネルは同時に開かない', async () => {
+    it('パターンのパネルとトークンの分析パネルは同時に開かない', async () => {
       const user = userEvent.setup();
-      render(<WithIdiom />);
+      render(<WithPattern />);
 
-      await user.click(idiomLabel('turn … off.'));
+      await user.click(patternLabel('turn … off.'));
       await user.click(chip('light'));
-      expect(screen.queryByLabelText('慣用句としての意味')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('パターンの意味')).not.toBeInTheDocument();
       expect(screen.getByDisplayValue('名詞')).toBeInTheDocument();
 
-      await user.click(idiomLabel('turn … off.'));
-      expect(screen.getByLabelText('慣用句としての意味')).toBeInTheDocument();
+      await user.click(patternLabel('turn … off.'));
+      expect(screen.getByLabelText('パターンの意味')).toBeInTheDocument();
       expect(screen.queryByDisplayValue('名詞')).not.toBeInTheDocument();
     });
 
-    it('パネルで意味を変えるとラベルに反映し、保存すると変更後の慣用句を onSave に渡す', async () => {
+    it('パネルで意味を変えるとラベルに反映し、保存すると変更後のパターンを onSave に渡す', async () => {
       const user = userEvent.setup();
-      render(<WithIdiom />);
+      render(<WithPattern />);
 
-      await user.click(idiomLabel('turn … off.'));
-      const meaning = screen.getByLabelText('慣用句としての意味');
+      await user.click(patternLabel('turn … off.'));
+      const meaning = screen.getByLabelText('パターンの意味');
       await user.clear(meaning);
       await user.type(meaning, '消す');
 
-      expect(idiomLabel('turn … off.')).toHaveTextContent('消す');
+      expect(patternLabel('turn … off.')).toHaveTextContent('消す');
       await user.click(screen.getByRole('button', { name: '保存' }));
-      expect(WithIdiom.args.onSave).toHaveBeenCalledWith(
-        idiomSentence.tokens,
-        [{ ...idiomSentence.idioms[0], meaning: '消す' }],
-        idiomSentence.naturalTranslation,
-        idiomSentence.tags,
+      expect(WithPattern.args.onSave).toHaveBeenCalledWith(
+        patternSentence.tokens,
+        [{ ...patternSentence.patterns[0], meaning: '消す' }],
+        patternSentence.naturalTranslation,
+        patternSentence.tags,
       );
     });
 
-    it('隣接していないトークンを選んで登録すると、慣用句を追加してそのパネルを開く', async () => {
+    it('隣接していないトークンを選んで登録すると、パターンを追加してそのパネルを開く', async () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: '慣用句を作成' }));
+      await user.click(screen.getByRole('button', { name: 'パターンを作成' }));
       expect(
         screen.getByText(
-          '慣用句を構成するトークンを2つ以上選択してください（離れていても選べます）',
+          'パターンを構成するトークンを2つ以上選択してください（離れていても選べます）',
         ),
       ).toBeInTheDocument();
       // 選択中はフレーズの作成ボタンを出さない。
-      expect(screen.queryByRole('button', { name: 'フレーズを作成' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '隣接フレーズを作成' })).not.toBeInTheDocument();
 
       await user.click(chip('looked up'));
       await user.click(chip('word'));
-      await user.click(screen.getByRole('button', { name: '慣用句に登録' }));
+      await user.click(screen.getByRole('button', { name: 'パターンに登録' }));
 
       // 意味が未入力のうちは、ラベルにその旨を出す。
-      expect(idiomLabel('looked up … word')).toHaveTextContent('意味未入力');
-      expect(screen.getByLabelText('慣用句としての意味')).toHaveFocus();
+      expect(patternLabel('looked up … word')).toHaveTextContent('意味未入力');
+      expect(screen.getByLabelText('パターンの意味')).toHaveFocus();
       // トークンは結合しない。
       expect(chipTexts()).toEqual(analyzedSentence.tokens.map((t) => t.text));
-      expect(screen.getByRole('button', { name: '慣用句を作成' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'パターンを作成' })).toBeInTheDocument();
     });
 
     it('トークンを 1 つしか選んでいないうちは登録ボタンを出さない', async () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: '慣用句を作成' }));
+      await user.click(screen.getByRole('button', { name: 'パターンを作成' }));
       await user.click(chip('word'));
 
-      expect(screen.queryByRole('button', { name: '慣用句に登録' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'パターンに登録' })).not.toBeInTheDocument();
     });
 
-    it('選択モード中は慣用句のラベルを押せない', async () => {
+    it('選択モード中はパターンのラベルを押せない', async () => {
       const user = userEvent.setup();
-      render(<WithIdiom />);
+      render(<WithPattern />);
 
-      await user.click(screen.getByRole('button', { name: '慣用句を作成' }));
+      await user.click(screen.getByRole('button', { name: 'パターンを作成' }));
 
-      expect(idiomLabel('turn … off.')).toBeDisabled();
+      expect(patternLabel('turn … off.')).toBeDisabled();
     });
 
-    it('慣用句を登録して意味を入力すると、トークン順の tokenIds と意味を onSave に渡す', async () => {
+    it('パターンを登録して意味を入力すると、トークン順の tokenIds と意味を onSave に渡す', async () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: '慣用句を作成' }));
+      await user.click(screen.getByRole('button', { name: 'パターンを作成' }));
       // 後ろのトークンから選んでも、英文中の順に並べて保存する。
       await user.click(chip('word'));
       await user.click(chip('I'));
-      await user.click(screen.getByRole('button', { name: '慣用句に登録' }));
-      await user.type(screen.getByLabelText('慣用句としての意味'), 'テスト');
+      await user.click(screen.getByRole('button', { name: 'パターンに登録' }));
+      await user.type(screen.getByLabelText('パターンの意味'), 'テスト');
       await user.click(screen.getByRole('button', { name: '保存' }));
 
       expect(Analyzed.args.onSave).toHaveBeenCalledWith(
@@ -305,50 +305,52 @@ describe('SentenceEditor', () => {
       );
     });
 
-    it('パネルで慣用句を削除するとラベルとパネルが消え、保存時に渡す一覧からも除かれる', async () => {
+    it('パネルでパターンを削除するとラベルとパネルが消え、保存時に渡す一覧からも除かれる', async () => {
       const user = userEvent.setup();
-      render(<WithIdiom />);
+      render(<WithPattern />);
 
-      await user.click(idiomLabel('turn … off.'));
-      await user.click(screen.getByRole('button', { name: '慣用句「turn … off.」を削除' }));
+      await user.click(patternLabel('turn … off.'));
+      await user.click(screen.getByRole('button', { name: 'パターン「turn … off.」を削除' }));
 
       expect(
-        screen.queryByRole('button', { name: '慣用句「turn … off.」を編集' }),
+        screen.queryByRole('button', { name: 'パターン「turn … off.」を編集' }),
       ).not.toBeInTheDocument();
-      expect(screen.queryByLabelText('慣用句としての意味')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('パターンの意味')).not.toBeInTheDocument();
       await user.click(screen.getByRole('button', { name: '保存' }));
-      expect(WithIdiom.args.onSave).toHaveBeenCalledWith(
-        idiomSentence.tokens,
+      expect(WithPattern.args.onSave).toHaveBeenCalledWith(
+        patternSentence.tokens,
         [],
-        idiomSentence.naturalTranslation,
-        idiomSentence.tags,
+        patternSentence.naturalTranslation,
+        patternSentence.tags,
       );
     });
 
-    it('慣用句の単語をフレーズに結合すると、慣用句はフレーズトークンを参照する', async () => {
+    it('パターンの単語をフレーズに結合すると、パターンはフレーズトークンを参照する', async () => {
       const user = userEvent.setup();
-      render(<WithIdiom />);
+      render(<WithPattern />);
 
-      await user.click(screen.getByRole('button', { name: 'フレーズを作成' }));
+      await user.click(screen.getByRole('button', { name: '隣接フレーズを作成' }));
       await user.click(chip('light'));
       await user.click(chip('off.'));
       await user.click(screen.getByRole('button', { name: 'グループ化' }));
 
-      expect(idiomLabel('turn … light off.')).toHaveTextContent(idiomSentence.idioms[0].meaning);
+      expect(patternLabel('turn … light off.')).toHaveTextContent(
+        patternSentence.patterns[0].meaning,
+      );
     });
 
-    it('慣用句に含まれるフレーズを分解すると、分解後の単語すべてを参照する', async () => {
+    it('パターンに含まれるフレーズを分解すると、分解後の単語すべてを参照する', async () => {
       const user = userEvent.setup();
       render(<Analyzed />);
 
-      await user.click(screen.getByRole('button', { name: '慣用句を作成' }));
+      await user.click(screen.getByRole('button', { name: 'パターンを作成' }));
       await user.click(chip('looked up'));
       await user.click(chip('word'));
-      await user.click(screen.getByRole('button', { name: '慣用句に登録' }));
+      await user.click(screen.getByRole('button', { name: 'パターンに登録' }));
       await user.click(chip('looked up'));
       await user.click(screen.getByRole('button', { name: '分解する' }));
 
-      expect(idiomLabel('looked up … word')).toBeInTheDocument();
+      expect(patternLabel('looked up … word')).toBeInTheDocument();
     });
   });
 

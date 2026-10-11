@@ -4,10 +4,10 @@ import { router } from '../../../.storybook/mocks/inertia';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vite-plus/test';
-import { analyzedSentence, idiomSentence } from '@/fixtures/sentences';
+import { analyzedSentence, patternSentence } from '@/fixtures/sentences';
 import * as stories from './Show.stories';
 
-const { Analyzed, WithIdiom, NotFound } = composeStories(stories);
+const { Analyzed, WithPattern, NotFound } = composeStories(stories);
 
 describe('Sentences/Show ページ', () => {
   it('sentence と tagSuggestions をエディタに渡して表示する', () => {
@@ -32,27 +32,27 @@ describe('Sentences/Show ページ', () => {
 
     expect(router.put).toHaveBeenCalledWith(`/sentences/${analyzedSentence.id}`, {
       tokens: analyzedSentence.tokens,
-      idioms: analyzedSentence.idioms,
+      patterns: analyzedSentence.patterns,
       naturalTranslation: '辞書で単語を調べた。',
       tags: analyzedSentence.tags,
     });
   });
 
-  it('慣用句の編集内容も PUT /sentences/:id に送る', async () => {
+  it('パターンの編集内容も PUT /sentences/:id に送る', async () => {
     const user = userEvent.setup();
-    render(<WithIdiom />);
+    render(<WithPattern />);
 
-    await user.click(screen.getByRole('button', { name: '慣用句「turn … off.」を編集' }));
-    const meaning = screen.getByLabelText('慣用句としての意味');
+    await user.click(screen.getByRole('button', { name: 'パターン「turn … off.」を編集' }));
+    const meaning = screen.getByLabelText('パターンの意味');
     await user.clear(meaning);
     await user.type(meaning, '消す');
     await user.click(screen.getByRole('button', { name: '保存' }));
 
-    expect(router.put).toHaveBeenCalledWith(`/sentences/${idiomSentence.id}`, {
-      tokens: idiomSentence.tokens,
-      idioms: [{ ...idiomSentence.idioms[0], meaning: '消す' }],
-      naturalTranslation: idiomSentence.naturalTranslation,
-      tags: idiomSentence.tags,
+    expect(router.put).toHaveBeenCalledWith(`/sentences/${patternSentence.id}`, {
+      tokens: patternSentence.tokens,
+      patterns: [{ ...patternSentence.patterns[0], meaning: '消す' }],
+      naturalTranslation: patternSentence.naturalTranslation,
+      tags: patternSentence.tags,
     });
   });
 
