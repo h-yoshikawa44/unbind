@@ -1,5 +1,9 @@
 # Unbind
 
+英文を分解してそれぞれ翻訳していく Web アプリ。
+
+![単語編集画面の例](/screenshots/sentence-edit.png)
+
 ## 環境
 
 base
