@@ -16,7 +16,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
 - ビルド: `npm run build`（`generate` → `build:client`（`vp build`）→ `build:server`（`vp build --mode server` = Workers エントリ `dist-server/index.js`）の順。サーバは client のマニフェストを参照するため client → server の順が必須）
 - ローカルで Workers ランタイム確認: `npm run preview`（`build` → `wrangler dev`。http://localhost:8787。KV は Miniflare のローカル模擬）
 - 本番デプロイ: `npm run deploy`（`build` → `wrangler deploy`。事前に `wrangler kv namespace create UNBIND_KV` で作った id を `wrangler.jsonc` に設定・`wrangler login` が必要）
-- テスト: `npm test`（= `vp test run`）／ウォッチ: `npm run test:watch`
+- テスト: `npm test`（= `vp test run`）／ウォッチ: `npm run test:watch`（詳細は後述の「テスト」）
 - Storybook: `npm run storybook`（http://localhost:6006）／静的ビルド: `npm run build-storybook`（`storybook-static/`）
 - **CSS Module のクラスを追加/削除したら `npm run generate`**（cmk が型を再生成。これを忘れると型が古いまま typecheck が通ってしまう）
 
@@ -45,7 +45,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - `wrangler.jsonc`: Workers 設定（`main`=Workers エントリ、`assets`=`dist` を静的配信、`kv_namespaces` の `UNBIND_KV`）。`id` は各自の KV を作って設定する（プレースホルダのまま）
   - `vite.config.ts`: `mode=server` ビルドは `cloudflareWorkersBuild`。dev は `@hono/vite-dev-server` の `cloudflareAdapter` で `c.env`（KV）を Miniflare 経由注入するので `npm run dev` でも KV が使える
   - `app/root-view.tsx`: HTML シェル。**Inertia の初期ページは `<script data-page="app" type="application/json">` の textContent で渡す**（v3 の `getInitialPageFromDOM` がこのセレクタで読む。`<div data-page>` 属性ではない）
-  - `app/pages.gen.ts`: `@hono/inertia/vite` が自動生成（`PageProps<C>` の型元）。手編集・コミット禁止（gitignore 済み）
+  - `app/pages.gen.ts`: `@hono/inertia/vite` が `vp dev` / `vp build` 時に自動生成（`PageProps<C>` の型元）。手編集禁止。**Git 管理対象**（CI の型チェック付き lint がこのファイルを必要とするため）なので、ページを追加・削除したら再生成された差分もコミットする
   - `src/client.tsx`: `createInertiaApp`（クライアントエントリ）
 - データ取得・遷移・保存は Inertia 方式:
   - 取得: サーバの `c.render('Sentences/Xxx', props)` → ページは `PageProps<'Sentences/Xxx'>` で受領（`useEffect + fetch` は不要）
@@ -58,17 +58,13 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - `@inertiajs/react` はエイリアスで `.storybook/mocks/inertia.tsx` に差し替わる（`router.*` は `fn()` で Actions に記録、`<Link>` は遷移しない）
   - コンポーネントのストーリーは `src/**` に同居、**ページのストーリーは `app/stories/` に置く**（`app/pages` 配下に置くと `inertiaPages()` がページ名として拾い、`src/client.tsx` の glob でクライアントバンドルにも入る）
   - サンプルデータは `src/fixtures/`
-- コンポーネントテスト（Vitest + jsdom + Testing Library。設定は `vite.config.ts` の `test`、セットアップは `src/test/setup.ts`）:
-  - `X/X.test.tsx` に置き、**`composeStories(stories)` でストーリーを流用して描画する**（args の `fn()` を `Story.args.onXxx` で検証）。props の上書きは `<Story value={...} />`
-  - テスト API は `vitest` ではなく **`vite-plus/test`** から import する
-  - ストーリーの `useArgs` による args 書き戻しはテストでは再描画されない。制御コンポーネントは「`value` が表示に反映される」と「`onChange` に正しい値が渡る」を分けて検証する
-  - `mode=test` では `vite.config.ts` のプラグインを `react()` のみにしている（Hono dev サーバ等を起動しないため）
-  - **ページのテストは `app/stories/` にストーリーと並べて置く**（`app/pages` 配下は不可。理由はストーリーと同じ）。`@inertiajs/react` は `test.alias` で Storybook と同じ `.storybook/mocks/inertia.tsx` に差し替わる。`router.*` の検証はモックを相対パスで直接 import して行う（`@inertiajs/react` 経由だと実型のメソッドになり `unbound-method` に掛かる）
-  - URL（`history.replaceState`）と mock の呼び出し履歴は `src/test/setup.ts` でテストごとにリセットしている
-- テストは Vitest の projects で 2 つに分かれる（`vp test run --project client|server` で個別実行可）:
-  - `client`（jsdom）: 上記のコンポーネント・ページのテスト
-  - `server`（node）: `app/*.test.ts`。Hono の `app.request(path, init, { UNBIND_KV })` でルートを叩く。`X-Inertia: true` を付けるとページオブジェクト（`{ component, props, url, version }`）が JSON で返るので、それを検証する。KV は `app/test/fake-kv.ts` のインメモリ実装（`raw` / `failOnGet` で破損データや I/O エラーも再現できる）
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
+
+## テスト
+
+テストの構成・書き方・落とし穴は `docs/testing.md` にまとめている（以下で読み込む）。
+
+@docs/testing.md
 
 ## 運用
 
