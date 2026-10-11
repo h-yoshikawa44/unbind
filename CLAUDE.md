@@ -16,6 +16,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
 - ビルド: `npm run build`（`generate` → `build:client`（`vp build`）→ `build:server`（`vp build --mode server` = Workers エントリ `dist-server/index.js`）の順。サーバは client のマニフェストを参照するため client → server の順が必須）
 - ローカルで Workers ランタイム確認: `npm run preview`（`build` → `wrangler dev`。http://localhost:8787。KV は Miniflare のローカル模擬）
 - 本番デプロイ: `npm run deploy`（`build` → `wrangler deploy`。事前に `wrangler kv namespace create UNBIND_KV` で作った id を `wrangler.jsonc` に設定・`wrangler login` が必要）
+- テスト: `npm test`（= `vp test run`）／ウォッチ: `npm run test:watch`（詳細は後述の「テスト」）
 - Storybook: `npm run storybook`（http://localhost:6006）／静的ビルド: `npm run build-storybook`（`storybook-static/`）
 - **CSS Module のクラスを追加/削除したら `npm run generate`**（cmk が型を再生成。これを忘れると型が古いまま typecheck が通ってしまう）
 
@@ -44,7 +45,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - `wrangler.jsonc`: Workers 設定（`main`=Workers エントリ、`assets`=`dist` を静的配信、`kv_namespaces` の `UNBIND_KV`）。`id` は各自の KV を作って設定する（プレースホルダのまま）
   - `vite.config.ts`: `mode=server` ビルドは `cloudflareWorkersBuild`。dev は `@hono/vite-dev-server` の `cloudflareAdapter` で `c.env`（KV）を Miniflare 経由注入するので `npm run dev` でも KV が使える
   - `app/root-view.tsx`: HTML シェル。**Inertia の初期ページは `<script data-page="app" type="application/json">` の textContent で渡す**（v3 の `getInitialPageFromDOM` がこのセレクタで読む。`<div data-page>` 属性ではない）
-  - `app/pages.gen.ts`: `@hono/inertia/vite` が自動生成（`PageProps<C>` の型元）。手編集・コミット禁止（gitignore 済み）
+  - `app/pages.gen.ts`: `@hono/inertia/vite` が `vp dev` / `vp build` 時に自動生成（`PageProps<C>` の型元）。手編集禁止。**Git 管理対象**（CI の型チェック付き lint がこのファイルを必要とするため）なので、ページを追加・削除したら再生成された差分もコミットする
   - `src/client.tsx`: `createInertiaApp`（クライアントエントリ）
 - データ取得・遷移・保存は Inertia 方式:
   - 取得: サーバの `c.render('Sentences/Xxx', props)` → ページは `PageProps<'Sentences/Xxx'>` で受領（`useEffect + fetch` は不要）
@@ -58,6 +59,12 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - コンポーネントのストーリーは `src/**` に同居、**ページのストーリーは `app/stories/` に置く**（`app/pages` 配下に置くと `inertiaPages()` がページ名として拾い、`src/client.tsx` の glob でクライアントバンドルにも入る）
   - サンプルデータは `src/fixtures/`
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
+
+## テスト
+
+テストの構成・書き方・落とし穴は `docs/testing.md` にまとめている（以下で読み込む）。
+
+@docs/testing.md
 
 ## 運用
 
