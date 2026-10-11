@@ -16,6 +16,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
 - ビルド: `npm run build`（`generate` → `build:client`（`vp build`）→ `build:server`（`vp build --mode server` = Workers エントリ `dist-server/index.js`）の順。サーバは client のマニフェストを参照するため client → server の順が必須）
 - ローカルで Workers ランタイム確認: `npm run preview`（`build` → `wrangler dev`。http://localhost:8787。KV は Miniflare のローカル模擬）
 - 本番デプロイ: `npm run deploy`（`build` → `wrangler deploy`。事前に `wrangler kv namespace create UNBIND_KV` で作った id を `wrangler.jsonc` に設定・`wrangler login` が必要）
+- テスト: `npm test`（= `vp test run`）／ウォッチ: `npm run test:watch`
 - Storybook: `npm run storybook`（http://localhost:6006）／静的ビルド: `npm run build-storybook`（`storybook-static/`）
 - **CSS Module のクラスを追加/削除したら `npm run generate`**（cmk が型を再生成。これを忘れると型が古いまま typecheck が通ってしまう）
 
@@ -57,6 +58,11 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - `@inertiajs/react` はエイリアスで `.storybook/mocks/inertia.tsx` に差し替わる（`router.*` は `fn()` で Actions に記録、`<Link>` は遷移しない）
   - コンポーネントのストーリーは `src/**` に同居、**ページのストーリーは `app/stories/` に置く**（`app/pages` 配下に置くと `inertiaPages()` がページ名として拾い、`src/client.tsx` の glob でクライアントバンドルにも入る）
   - サンプルデータは `src/fixtures/`
+- コンポーネントテスト（Vitest + jsdom + Testing Library。設定は `vite.config.ts` の `test`、セットアップは `src/test/setup.ts`）:
+  - `X/X.test.tsx` に置き、**`composeStories(stories)` でストーリーを流用して描画する**（args の `fn()` を `Story.args.onXxx` で検証）。props の上書きは `<Story value={...} />`
+  - テスト API は `vitest` ではなく **`vite-plus/test`** から import する
+  - ストーリーの `useArgs` による args 書き戻しはテストでは再描画されない。制御コンポーネントは「`value` が表示に反映される」と「`onChange` に正しい値が渡る」を分けて検証する
+  - `mode=test` では `vite.config.ts` のプラグインを `react()` のみにしている（Hono dev サーバ等を起動しないため）
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
 
 ## 運用
