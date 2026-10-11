@@ -1,8 +1,8 @@
 import type { TokenWithAnalysis } from '@/types';
-import { PartOfSpeechSelect } from '@/components/PartOfSpeechSelect';
-import { VerbFormSelect } from '@/components/VerbFormSelect';
-import { NounFormSelect } from '@/components/NounFormSelect';
-import styles from '@/components/TokenAnalysisPanel.module.css';
+import { PartOfSpeechSelect } from '@/components/PartOfSpeechSelect/PartOfSpeechSelect';
+import { VerbFormSelect } from '@/components/VerbFormSelect/VerbFormSelect';
+import { NounFormSelect } from '@/components/NounFormSelect/NounFormSelect';
+import styles from '@/components/TokenAnalysisPanel/TokenAnalysisPanel.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
 interface Props {

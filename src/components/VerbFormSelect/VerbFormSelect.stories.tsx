@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
-import { VerbFormSelect } from '@/components/VerbFormSelect';
+import { VerbFormSelect } from '@/components/VerbFormSelect/VerbFormSelect';
 
 const meta = {
   title: 'Components/VerbFormSelect',

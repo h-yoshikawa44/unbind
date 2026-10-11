@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
-import { SentenceEditor } from '@/components/SentenceEditor';
+import { SentenceEditor } from '@/components/SentenceEditor/SentenceEditor';
 import { analyzedSentence, sampleTags, unanalyzedSentence } from '@/fixtures/sentences';
 
 const meta = {

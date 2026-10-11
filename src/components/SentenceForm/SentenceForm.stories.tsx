@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
-import { SentenceForm } from '@/components/SentenceForm';
+import { SentenceForm } from '@/components/SentenceForm/SentenceForm';
 import { sampleTags } from '@/fixtures/sentences';
 
 const meta = {

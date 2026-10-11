@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
-import { SentenceList } from '@/components/SentenceList';
+import { SentenceList } from '@/components/SentenceList/SentenceList';
 import { sampleSentences, sampleTags } from '@/fixtures/sentences';
 
 const meta = {

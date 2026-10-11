@@ -2,7 +2,7 @@ import { router } from '@inertiajs/react';
 import type { PageProps } from '../../pages.gen';
 import type { TokenWithAnalysis } from '@/types';
 import { RootLayout } from '@/layouts/RootLayout';
-import { SentenceEditor } from '@/components/SentenceEditor';
+import { SentenceEditor } from '@/components/SentenceEditor/SentenceEditor';
 import { toPayload } from '@/inertia';
 import styles from './Show.module.css';
 

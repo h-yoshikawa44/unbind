@@ -1,22 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
-import { TagInput } from '@/components/TagInput';
-import { sampleTags } from '@/fixtures/sentences';
+import { PartOfSpeechSelect } from '@/components/PartOfSpeechSelect/PartOfSpeechSelect';
 
 const meta = {
-  title: 'Components/TagInput',
-  component: TagInput,
+  title: 'Components/PartOfSpeechSelect',
+  component: PartOfSpeechSelect,
   args: {
-    value: ['過去文'],
+    value: null,
     onChange: fn(),
-    suggestions: sampleTags,
   },
-  // 制御コンポーネントなので、変更を args に書き戻して操作できるようにする。
   render: function Render(args) {
     const [, updateArgs] = useArgs<typeof args>();
     return (
-      <TagInput
+      <PartOfSpeechSelect
         {...args}
         onChange={(value) => {
           updateArgs({ value });
@@ -25,13 +22,13 @@ const meta = {
       />
     );
   },
-} satisfies Meta<typeof TagInput>;
+} satisfies Meta<typeof PartOfSpeechSelect>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Unselected: Story = {};
 
-export const Empty: Story = {
-  args: { value: [] },
+export const Selected: Story = {
+  args: { value: 'verb' },
 };

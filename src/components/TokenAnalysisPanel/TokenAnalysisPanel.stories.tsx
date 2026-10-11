@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
-import { TokenAnalysisPanel } from '@/components/TokenAnalysisPanel';
+import { TokenAnalysisPanel } from '@/components/TokenAnalysisPanel/TokenAnalysisPanel';
 import { analyzedSentence, unanalyzedSentence } from '@/fixtures/sentences';
 
 /** フィクスチャから指定 id のトークンを取り出す（存在しない id はフィクスチャの誤り）。 */

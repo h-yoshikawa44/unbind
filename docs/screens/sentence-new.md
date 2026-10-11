@@ -11,7 +11,7 @@
 | URL                  | `/sentences/new`                                                                                     |
 | サーバルート         | `GET /sentences/new`（`app/server.tsx`）。`fetchAllTags()` を props で渡す。作成は `POST /sentences` |
 | ページコンポーネント | `app/pages/Sentences/New.tsx`（props を `PageProps<'Sentences/New'>` で受領）                        |
-| UIコンポーネント     | `src/components/SentenceForm.tsx`, `src/components/TagInput.tsx`                                     |
+| UIコンポーネント     | `src/components/SentenceForm/SentenceForm.tsx`, `src/components/TagInput/TagInput.tsx`               |
 
 ## 画面レイアウト
 
