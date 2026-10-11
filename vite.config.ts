@@ -63,8 +63,15 @@ export default defineConfig(({ command, mode }) => {
     },
     test: {
       environment: 'jsdom',
-      include: ['src/**/*.test.{ts,tsx}'],
+      // ページのテストは app/pages の外（app/stories）に置く（理由は .storybook/main.ts と同じ）。
+      include: ['src/**/*.test.{ts,tsx}', 'app/stories/**/*.test.{ts,tsx}'],
       setupFiles: ['./src/test/setup.ts'],
+      alias: {
+        // Storybook と同じく、Inertia のクライアントルータをモックに差し替える。
+        '@inertiajs/react': fileURLToPath(
+          new URL('./.storybook/mocks/inertia.tsx', import.meta.url),
+        ),
+      },
     },
     // 本番では vite-ssr-components の <Script> がこの define からハッシュ付き asset を解決する。
     define: isServerBuild

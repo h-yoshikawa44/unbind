@@ -10,8 +10,10 @@ setProjectAnnotations(preview);
 
 afterEach(() => {
   cleanup();
-  // ストーリーの args に入っている fn() はモジュール単位で共有されるため、テストごとに呼び出し履歴を消す。
+  // ストーリーの args や router モックの fn() はモジュール単位で共有されるため、テストごとに呼び出し履歴を消す。
   clearAllMocks();
+  // Index ページは URL クエリに絞り込み状態を書き戻すので、次のテストに持ち越さない。
+  window.history.replaceState({}, '', '/');
   // テスト内で vi.spyOn した window.confirm 等を元に戻す。
   vi.restoreAllMocks();
 });

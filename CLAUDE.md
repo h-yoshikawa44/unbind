@@ -63,6 +63,8 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - テスト API は `vitest` ではなく **`vite-plus/test`** から import する
   - ストーリーの `useArgs` による args 書き戻しはテストでは再描画されない。制御コンポーネントは「`value` が表示に反映される」と「`onChange` に正しい値が渡る」を分けて検証する
   - `mode=test` では `vite.config.ts` のプラグインを `react()` のみにしている（Hono dev サーバ等を起動しないため）
+  - **ページのテストは `app/stories/` にストーリーと並べて置く**（`app/pages` 配下は不可。理由はストーリーと同じ）。`@inertiajs/react` は `test.alias` で Storybook と同じ `.storybook/mocks/inertia.tsx` に差し替わる。`router.*` の検証はモックを相対パスで直接 import して行う（`@inertiajs/react` 経由だと実型のメソッドになり `unbound-method` に掛かる）
+  - URL（`history.replaceState`）と mock の呼び出し履歴は `src/test/setup.ts` でテストごとにリセットしている
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
 
 ## 運用
