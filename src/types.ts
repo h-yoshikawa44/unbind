@@ -178,6 +178,20 @@ export interface TokenAnalysis {
 export type TokenWithAnalysis = Token & Omit<TokenAnalysis, 'tokenId'>;
 
 /**
+ * 複数のトークンの組み合わせで意味をなす慣用句（例: "turn ... off"）。
+ * DB対応: "idioms" テーブル + "idiom_tokens" 中間テーブルに対応する想定。
+ *
+ * フレーズトークン（memberTexts）と違いトークン自体は結合しないため、
+ * 構成する単語それぞれの品詞・訳を保ったまま、隣接していない単語同士も慣用句にできる。
+ * tokenIds は英文中のトークン順に並べる。
+ */
+export interface Idiom {
+  id: string;
+  tokenIds: string[];
+  meaning: string;
+}
+
+/**
  * 英文とそのトークン分析データをまとめたエンティティ。
  * DB対応: "sentences" テーブルに対応（トークンは別テーブルで管理）。
  *
@@ -188,6 +202,7 @@ export interface Sentence {
   id: string;
   text: string;
   tokens: TokenWithAnalysis[];
+  idioms: Idiom[];
   naturalTranslation: string;
   tags: string[];
   createdAt: string;

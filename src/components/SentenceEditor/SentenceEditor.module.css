@@ -65,6 +65,11 @@
   color: var(--text);
 }
 
+/* 慣用句の連結線（IdiomConnectors）を重ねる基準。チップの位置はここを基準に測る。 */
+.tokenListWrap {
+  position: relative;
+}
+
 .tokenList {
   display: flex;
   flex-wrap: wrap;

@@ -75,8 +75,8 @@ describe('GET /（英文一覧）', () => {
     expect(page).toEqual(expect.objectContaining({ props: { sentences: [], allTags: [] } }));
   });
 
-  it('naturalTranslation / tags が無い古いデータは既定値で補完する', async () => {
-    const { naturalTranslation: _n, tags: _t, ...legacy } = unanalyzedSentence;
+  it('naturalTranslation / tags / idioms が無い古いデータは既定値で補完する', async () => {
+    const { naturalTranslation: _n, tags: _t, idioms: _i, ...legacy } = unanalyzedSentence;
     const { kv } = createFakeKV({ sentences: [legacy] });
 
     const { page } = await visit(kv, '/');
@@ -84,7 +84,7 @@ describe('GET /（英文一覧）', () => {
     expect(page).toEqual(
       expect.objectContaining({
         props: {
-          sentences: [{ ...unanalyzedSentence, naturalTranslation: '', tags: [] }],
+          sentences: [{ ...unanalyzedSentence, naturalTranslation: '', tags: [], idioms: [] }],
           allTags: [],
         },
       }),
@@ -233,6 +233,7 @@ describe('POST /sentences（新規作成）', () => {
         id: 'new-id',
         text: 'Good morning.',
         tokens: body.tokens,
+        idioms: [],
         naturalTranslation: '',
         // タグは前後の空白除去・空文字除外・重複排除される。
         tags: ['あいさつ文'],
@@ -278,11 +279,13 @@ describe('POST /sentences（新規作成）', () => {
 describe('PUT /sentences/:id（更新）', () => {
   const body = {
     tokens: newer.tokens.map((t) => ({ ...t, wordMeaning: `${t.text} の意味` })),
+    // 隣接していないトークン（looked up … word）の慣用句。
+    idioms: [{ id: 'i1', tokenIds: ['s1-t1', 's1-t3'], meaning: '単語を調べる' }],
     naturalTranslation: '辞書で単語を調べた。',
     tags: ['過去文', ' 辞書 ', '過去文'],
   };
 
-  it('トークン・意訳・タグと更新日時を更新し、詳細へ 303 でリダイレクトする', async () => {
+  it('トークン・慣用句・意訳・タグと更新日時を更新し、詳細へ 303 でリダイレクトする', async () => {
     const fake = createFakeKV({ sentences: [older, newer] });
 
     const res = await send(fake.kv, 'PUT', `/sentences/${newer.id}`, body);
@@ -294,6 +297,7 @@ describe('PUT /sentences/:id（更新）', () => {
       {
         ...newer,
         tokens: body.tokens,
+        idioms: [{ id: 'i1', tokenIds: ['s1-t1', 's1-t3'], meaning: '単語を調べる' }],
         naturalTranslation: '辞書で単語を調べた。',
         tags: ['過去文', '辞書'],
         // 作成日時・英文は変えず、更新日時だけ進める。
@@ -313,13 +317,18 @@ describe('PUT /sentences/:id（更新）', () => {
     expect(fake.savedSentences()).toEqual([older]);
   });
 
-  it('ボディが不正なら 400 を返し、保存しない', async () => {
+  it.each([
+    ['意訳が文字列でない', { ...body, naturalTranslation: 123 }],
+    ['idioms が無い', { ...body, idioms: undefined }],
+    ['慣用句の構成トークンが空', { ...body, idioms: [{ ...body.idioms[0], tokenIds: [] }] }],
+    [
+      '慣用句が存在しないトークンを参照する',
+      { ...body, idioms: [{ ...body.idioms[0], tokenIds: ['s1-t1', 'unknown'] }] },
+    ],
+  ])('ボディが不正（%s）なら 400 を返し、保存しない', async (_, invalid) => {
     const fake = createFakeKV({ sentences: [newer] });
 
-    const res = await send(fake.kv, 'PUT', `/sentences/${newer.id}`, {
-      ...body,
-      naturalTranslation: 123,
-    });
+    const res = await send(fake.kv, 'PUT', `/sentences/${newer.id}`, invalid);
 
     expect(res.status).toBe(400);
     expect(fake.savedSentences()).toEqual([newer]);

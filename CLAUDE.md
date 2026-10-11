@@ -59,6 +59,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - コンポーネントのストーリーは `src/**` に同居、**ページのストーリーは `app/stories/` に置く**（`app/pages` 配下に置くと `inertiaPages()` がページ名として拾い、`src/client.tsx` の glob でクライアントバンドルにも入る）
   - サンプルデータは `src/fixtures/`
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
+- 慣用句は 2 種類: 隣接トークンを 1 つに結合する**フレーズ**（`Token.memberTexts` + `idiomMeaning`）と、トークンを結合せず ID で参照する**慣用句**（`Sentence.idioms`。隣接していない単語の組み合わせも可・単語ごとの分析を保てる）。フレーズの結合・分解時は `src/idioms.ts` の `replaceIdiomTokens` で慣用句の参照を追従させる
 
 ## テスト
 
