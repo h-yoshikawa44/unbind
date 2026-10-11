@@ -1,7 +1,9 @@
 export type PartOfSpeech =
   | 'noun'
   | 'pronoun'
+  | 'interrogative-pronoun'
   | 'verb'
+  | 'be-verb'
   | 'adjective'
   | 'adverb'
   | 'preposition'
@@ -9,12 +11,15 @@ export type PartOfSpeech =
   | 'definite-article'
   | 'indefinite-article'
   | 'interjection'
+  | 'to-infinitive'
   | 'other';
 
 export const PART_OF_SPEECH_LABELS: Record<PartOfSpeech, string> = {
   noun: '名詞',
   pronoun: '代名詞',
+  'interrogative-pronoun': '疑問代名詞',
   verb: '動詞',
+  'be-verb': 'be動詞',
   adjective: '形容詞',
   adverb: '副詞',
   preposition: '前置詞',
@@ -22,6 +27,7 @@ export const PART_OF_SPEECH_LABELS: Record<PartOfSpeech, string> = {
   'definite-article': '定冠詞',
   'indefinite-article': '不定冠詞',
   interjection: '感嘆詞',
+  'to-infinitive': 'to不定詞',
   other: 'その他',
 };
 
@@ -29,7 +35,9 @@ export const PART_OF_SPEECH_LABELS: Record<PartOfSpeech, string> = {
 export const PART_OF_SPEECH_VALUES: ReadonlyArray<PartOfSpeech> = [
   'noun',
   'pronoun',
+  'interrogative-pronoun',
   'verb',
+  'be-verb',
   'adjective',
   'adverb',
   'preposition',
@@ -37,6 +45,7 @@ export const PART_OF_SPEECH_VALUES: ReadonlyArray<PartOfSpeech> = [
   'definite-article',
   'indefinite-article',
   'interjection',
+  'to-infinitive',
   'other',
 ];
 
@@ -113,6 +122,26 @@ export function isNounForm(value: string): value is NounForm {
   return value in NOUN_FORM_LABELS;
 }
 
+export type InfinitiveUsage = 'noun' | 'adjective' | 'adverb';
+
+export const INFINITIVE_USAGE_LABELS: Record<InfinitiveUsage, string> = {
+  noun: '名詞的用法',
+  adjective: '形容詞的用法',
+  adverb: '副詞的用法',
+};
+
+/** 型安全なイテレーションのために使用する InfinitiveUsage の値一覧。 */
+export const INFINITIVE_USAGE_VALUES: ReadonlyArray<InfinitiveUsage> = [
+  'noun',
+  'adjective',
+  'adverb',
+];
+
+/** InfinitiveUsage 値のランタイム検証用タイプガード。 */
+export function isInfinitiveUsage(value: string): value is InfinitiveUsage {
+  return value in INFINITIVE_USAGE_LABELS;
+}
+
 /**
  * 英文中の単語またはフレーズを表すトークン。
  * DB対応: "tokens" テーブルに対応。
@@ -137,6 +166,7 @@ export interface TokenAnalysis {
   partOfSpeech: PartOfSpeech | null;
   verbForm: VerbForm | null;
   nounForm: NounForm | null;
+  infinitiveUsage: InfinitiveUsage | null;
   wordMeaning: string;
   idiomMeaning: string;
 }

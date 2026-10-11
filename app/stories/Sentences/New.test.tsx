@@ -45,6 +45,7 @@ describe('Sentences/New ページ', () => {
         partOfSpeech: null,
         verbForm: null,
         nounForm: null,
+        infinitiveUsage: null,
         wordMeaning: '',
         idiomMeaning: '',
       })),

@@ -91,6 +91,22 @@ describe('GET /（英文一覧）', () => {
     );
   });
 
+  it('infinitiveUsage が無い古いトークンは null で補完する', async () => {
+    const legacy = {
+      ...unanalyzedSentence,
+      tokens: unanalyzedSentence.tokens.map(({ infinitiveUsage: _i, ...token }) => token),
+    };
+    const { kv } = createFakeKV({ sentences: [legacy] });
+
+    const { page } = await visit(kv, '/');
+
+    expect(page).toEqual(
+      expect.objectContaining({
+        props: { sentences: [unanalyzedSentence], allTags: ['あいさつ文'] },
+      }),
+    );
+  });
+
   it('KV の JSON が壊れていればエラーページを表示する', async () => {
     const { kv } = createFakeKV({ raw: '{broken' });
 

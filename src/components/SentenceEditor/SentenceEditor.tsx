@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import type { Sentence, TokenWithAnalysis } from '@/types';
-import { NOUN_FORM_LABELS, PART_OF_SPEECH_LABELS, VERB_FORM_LABELS } from '@/types';
+import {
+  INFINITIVE_USAGE_LABELS,
+  NOUN_FORM_LABELS,
+  PART_OF_SPEECH_LABELS,
+  VERB_FORM_LABELS,
+} from '@/types';
 import { mergeTokens, splitToken } from '@/tokenize';
 import { TokenAnalysisPanel } from '@/components/TokenAnalysisPanel/TokenAnalysisPanel';
 import { TagInput } from '@/components/TagInput/TagInput';
@@ -183,6 +188,13 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
                     {NOUN_FORM_LABELS[token.nounForm]}
                   </span>
                 )}
+                {!isPhraseMode &&
+                  token.partOfSpeech === 'to-infinitive' &&
+                  token.infinitiveUsage && (
+                    <span className={styles.tokenInfinitiveUsageBadge}>
+                      {INFINITIVE_USAGE_LABELS[token.infinitiveUsage]}
+                    </span>
+                  )}
                 {!isPhraseMode && token.wordMeaning && (
                   <span className={styles.tokenChipMeaning}>{token.wordMeaning}</span>
                 )}

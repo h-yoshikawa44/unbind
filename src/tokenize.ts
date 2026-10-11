@@ -23,6 +23,7 @@ export function tokenize(sentenceId: string, text: string): TokenWithAnalysis[] 
       partOfSpeech: null,
       verbForm: null,
       nounForm: null,
+      infinitiveUsage: null,
       wordMeaning: '',
       idiomMeaning: '',
     });
@@ -60,6 +61,7 @@ export function mergeTokens(tokens: TokenWithAnalysis[], ids: string[]): TokenWi
     partOfSpeech: null,
     verbForm: null,
     nounForm: null,
+    infinitiveUsage: null,
     wordMeaning: '',
     idiomMeaning: '',
   };
@@ -86,6 +88,7 @@ export function splitToken(tokens: TokenWithAnalysis[], id: string): TokenWithAn
     partOfSpeech: null,
     verbForm: null,
     nounForm: null,
+    infinitiveUsage: null,
     wordMeaning: '',
     idiomMeaning: '',
   }));

@@ -44,6 +44,17 @@ export const VerbPhrase: Story = {
   args: { token: tokenOf(analyzedSentence, 's1-t1') },
 };
 
+/** to不定詞: 用法（名詞的/形容詞的/副詞的）の選択欄が出る。 */
+export const ToInfinitive: Story = {
+  args: {
+    token: {
+      ...tokenOf(unanalyzedSentence, 's2-t1'),
+      partOfSpeech: 'to-infinitive',
+      infinitiveUsage: 'adverb',
+    },
+  },
+};
+
 export const Unanalyzed: Story = {
   args: { token: tokenOf(unanalyzedSentence, 's2-t0') },
 };

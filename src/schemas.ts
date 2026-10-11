@@ -11,11 +11,17 @@
  */
 import { z } from 'zod';
 import type { Sentence, TokenWithAnalysis } from '@/types';
-import { NOUN_FORM_VALUES, PART_OF_SPEECH_VALUES, VERB_FORM_VALUES } from '@/types';
+import {
+  INFINITIVE_USAGE_VALUES,
+  NOUN_FORM_VALUES,
+  PART_OF_SPEECH_VALUES,
+  VERB_FORM_VALUES,
+} from '@/types';
 
 const partOfSpeechSchema = z.enum(PART_OF_SPEECH_VALUES);
 const verbFormSchema = z.enum(VERB_FORM_VALUES);
 const nounFormSchema = z.enum(NOUN_FORM_VALUES);
+const infinitiveUsageSchema = z.enum(INFINITIVE_USAGE_VALUES);
 
 /** Token + TokenAnalysis の結合ビュー（TokenWithAnalysis 相当）。 */
 export const tokenWithAnalysisSchema = z.object({
@@ -27,6 +33,7 @@ export const tokenWithAnalysisSchema = z.object({
   partOfSpeech: partOfSpeechSchema.nullable(),
   verbForm: verbFormSchema.nullable(),
   nounForm: nounFormSchema.nullable(),
+  infinitiveUsage: infinitiveUsageSchema.nullable(),
   wordMeaning: z.string(),
   idiomMeaning: z.string(),
 }) satisfies z.ZodType<TokenWithAnalysis>;
@@ -44,10 +51,15 @@ export const sentenceSchema = z.object({
 
 /**
  * data.json から読み込む際のスキーマ。
- * 後から追加した naturalTranslation / tags は古いデータに存在しないため、
+ * 後から追加した naturalTranslation / tags / トークンの infinitiveUsage は古いデータに存在しないため、
  * 既定値で補完する（従来 store.ts の loadAll が手動で行っていた補完に相当）。
  */
+const storedTokenSchema = tokenWithAnalysisSchema.extend({
+  infinitiveUsage: infinitiveUsageSchema.nullable().default(null),
+});
+
 export const storedSentenceSchema = sentenceSchema.extend({
+  tokens: z.array(storedTokenSchema),
   naturalTranslation: z.string().default(''),
   tags: z.array(z.string()).default([]),
 });
