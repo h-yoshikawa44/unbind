@@ -16,6 +16,7 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
 - ビルド: `npm run build`（`generate` → `build:client`（`vp build`）→ `build:server`（`vp build --mode server` = Workers エントリ `dist-server/index.js`）の順。サーバは client のマニフェストを参照するため client → server の順が必須）
 - ローカルで Workers ランタイム確認: `npm run preview`（`build` → `wrangler dev`。http://localhost:8787。KV は Miniflare のローカル模擬）
 - 本番デプロイ: `npm run deploy`（`build` → `wrangler deploy`。事前に `wrangler kv namespace create UNBIND_KV` で作った id を `wrangler.jsonc` に設定・`wrangler login` が必要）
+- Storybook: `npm run storybook`（http://localhost:6006）／静的ビルド: `npm run build-storybook`（`storybook-static/`）
 - **CSS Module のクラスを追加/削除したら `npm run generate`**（cmk が型を再生成。これを忘れると型が古いまま typecheck が通ってしまう）
 
 ## TypeScript 規約（型/リンタが強制するので違反するとエラー）
@@ -51,6 +52,11 @@ lint / format はパッケージマネージャではなく vite-plus の `vp` C
   - 変更: `router.post/put/delete` → サーバは `c.redirect(url, 303)` で返す
   - `router.post/put` のペイロードは **`src/inertia.ts` の `toPayload()`** を通す（interface 由来のドメイン型は `RequestPayload` の index signature に構造的一致しないため。理由コメント付き `as` を 1 箇所に集約）
 - 一覧の絞り込み・ページングは当面クライアント側（全件を props で受け、フィルタは state + `history.replaceState` で URL 同期）
+- Storybook（`.storybook/`）:
+  - ルートの `vite.config.ts` は使わず `.storybook/vite.config.ts`（react + `@` エイリアスのみ）でビルドする。Hono dev サーバ等のプラグインを Storybook に持ち込まないため
+  - `@inertiajs/react` はエイリアスで `.storybook/mocks/inertia.tsx` に差し替わる（`router.*` は `fn()` で Actions に記録、`<Link>` は遷移しない）
+  - コンポーネントのストーリーは `src/**` に同居、**ページのストーリーは `app/stories/` に置く**（`app/pages` 配下に置くと `inertiaPages()` がページ名として拾い、`src/client.tsx` の glob でクライアントバンドルにも入る）
+  - サンプルデータは `src/fixtures/`
 - Token 型は DB スキーマ対応: `Token`（sentences 相当）+ `TokenAnalysis`（token_analyses 相当）を `TokenWithAnalysis` に結合してフロントで扱う
 
 ## 運用
