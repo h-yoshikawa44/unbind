@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react';
 import type { PageProps } from '../../pages.gen';
 import { normalizeTags } from '@/types';
 import { RootLayout } from '@/layouts/RootLayout';
-import { SentenceList } from '@/components/SentenceList';
+import { SentenceList } from '@/components/SentenceList/SentenceList';
 
 /** 1 ページあたりに表示する英文の件数。 */
 const PAGE_SIZE = 20;

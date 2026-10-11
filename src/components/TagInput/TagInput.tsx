@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { normalizeTags } from '@/types';
-import styles from '@/components/TagInput.module.css';
+import styles from '@/components/TagInput/TagInput.module.css';
 
 interface Props {
   value: string[];

@@ -38,11 +38,23 @@ export default defineConfig(({ command, mode }) => {
         'react/react-in-jsx-scope': 'off',
       },
       // generated/** は cmk、app/pages.gen.ts は @hono/inertia/vite の自動生成物
-      ignorePatterns: ['generated/**', 'app/pages.gen.ts', 'dist/**', 'dist-server/**'],
+      ignorePatterns: [
+        'generated/**',
+        'app/pages.gen.ts',
+        'dist/**',
+        'dist-server/**',
+        'storybook-static/**',
+      ],
     },
     fmt: {
       singleQuote: true,
-      ignorePatterns: ['generated/**', 'app/pages.gen.ts', 'dist/**', 'dist-server/**'],
+      ignorePatterns: [
+        'generated/**',
+        'app/pages.gen.ts',
+        'dist/**',
+        'dist-server/**',
+        'storybook-static/**',
+      ],
     },
     staged: {
       '*': 'vp check --fix',

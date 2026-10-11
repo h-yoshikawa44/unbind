@@ -1,5 +1,5 @@
-import type { Sentence } from '../types';
-import styles from '@/components/SentenceList.module.css';
+import type { Sentence } from '@/types';
+import styles from '@/components/SentenceList/SentenceList.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
 interface Props {

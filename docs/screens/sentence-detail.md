@@ -11,7 +11,7 @@
 | URL                  | `/sentences/:id`                                                                                                                             |
 | サーバルート         | `GET /sentences/:id`（`app/server.tsx`）。対象 `sentence`（無ければ `null`）と `fetchAllTags()` を props で渡す。保存は `PUT /sentences/:id` |
 | ページコンポーネント | `app/pages/Sentences/Show.tsx`（props を `PageProps<'Sentences/Show'>` で受領）                                                              |
-| UIコンポーネント     | `src/components/SentenceEditor.tsx`, `src/components/TagInput.tsx`                                                                           |
+| UIコンポーネント     | `src/components/SentenceEditor/SentenceEditor.tsx`, `src/components/TagInput/TagInput.tsx`                                                   |
 
 ## 画面レイアウト
 

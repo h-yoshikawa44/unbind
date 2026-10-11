@@ -2,9 +2,9 @@ import { useState } from 'react';
 import type { Sentence, TokenWithAnalysis } from '@/types';
 import { NOUN_FORM_LABELS, PART_OF_SPEECH_LABELS, VERB_FORM_LABELS } from '@/types';
 import { mergeTokens, splitToken } from '@/tokenize';
-import { TokenAnalysisPanel } from '@/components/TokenAnalysisPanel';
-import { TagInput } from '@/components/TagInput';
-import styles from '@/components/SentenceEditor.module.css';
+import { TokenAnalysisPanel } from '@/components/TokenAnalysisPanel/TokenAnalysisPanel';
+import { TagInput } from '@/components/TagInput/TagInput';
+import styles from '@/components/SentenceEditor/SentenceEditor.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
 interface Props {

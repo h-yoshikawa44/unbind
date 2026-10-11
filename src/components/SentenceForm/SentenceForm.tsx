@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import { normalizeTags } from '@/types';
-import { TagInput } from '@/components/TagInput';
-import styles from '@/components/SentenceForm.module.css';
+import { TagInput } from '@/components/TagInput/TagInput';
+import styles from '@/components/SentenceForm/SentenceForm.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
 interface Props {

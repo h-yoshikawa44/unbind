@@ -8,12 +8,12 @@
 
 ## ルート
 
-| 項目                 | 値                                                                                                                    |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| URL                  | `/`（タグ絞り込み時: `/?tags=過去文,あいさつ文`、キーワード絞り込み時: `/?q=hello world`、2ページ目以降: `/?page=2`） |
-| サーバルート         | `GET /`（`app/server.tsx`）。`fetchSentences()` の全件と `fetchAllTags()` を props として渡す                         |
-| ページコンポーネント | `app/pages/Sentences/Index.tsx`（props を `PageProps<'Sentences/Index'>` で受領）                                     |
-| UIコンポーネント     | `src/components/SentenceList.tsx`, `src/components/TagInput.tsx`（絞り込みバーは `SentenceList` 内に実装）            |
+| 項目                 | 値                                                                                                                               |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| URL                  | `/`（タグ絞り込み時: `/?tags=過去文,あいさつ文`、キーワード絞り込み時: `/?q=hello world`、2ページ目以降: `/?page=2`）            |
+| サーバルート         | `GET /`（`app/server.tsx`）。`fetchSentences()` の全件と `fetchAllTags()` を props として渡す                                    |
+| ページコンポーネント | `app/pages/Sentences/Index.tsx`（props を `PageProps<'Sentences/Index'>` で受領）                                                |
+| UIコンポーネント     | `src/components/SentenceList/SentenceList.tsx`, `src/components/TagInput/TagInput.tsx`（絞り込みバーは `SentenceList` 内に実装） |
 
 絞り込み・ページングは当面クライアント側で行う（サーバは全件を渡す）。クエリパラメータの状態は `Index.tsx` がローカル state で保持し、`history.replaceState` で URL に同期する（サーバへは問い合わせない）。
 

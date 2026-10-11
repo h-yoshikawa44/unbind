@@ -30,5 +30,5 @@
   "cmkOptions": {
     "enabled": true
   },
-  "include": ["src", "app"]
+  "include": ["src", "app", ".storybook/preview.ts", ".storybook/mocks"]
 }

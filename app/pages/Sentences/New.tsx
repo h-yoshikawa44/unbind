@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/react';
 import type { PageProps } from '../../pages.gen';
 import { RootLayout } from '@/layouts/RootLayout';
-import { SentenceForm } from '@/components/SentenceForm';
+import { SentenceForm } from '@/components/SentenceForm/SentenceForm';
 import { tokenize } from '@/tokenize';
 import { toPayload } from '@/inertia';
 
