@@ -199,7 +199,8 @@
 }
 
 .tokenPosBadge[data-pos='verb'],
-.tokenPosBadge[data-pos='be-verb'] {
+.tokenPosBadge[data-pos='be-verb'],
+.tokenPosBadge[data-pos='auxiliary-verb'] {
   --pos-color: var(--pos-verb);
 }
 

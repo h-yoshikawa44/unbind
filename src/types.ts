@@ -4,6 +4,7 @@ export type PartOfSpeech =
   | 'interrogative-pronoun'
   | 'verb'
   | 'be-verb'
+  | 'auxiliary-verb'
   | 'adjective'
   | 'adverb'
   | 'preposition'
@@ -20,6 +21,7 @@ export const PART_OF_SPEECH_LABELS: Record<PartOfSpeech, string> = {
   'interrogative-pronoun': '疑問代名詞',
   verb: '動詞',
   'be-verb': 'be動詞',
+  'auxiliary-verb': '助動詞',
   adjective: '形容詞',
   adverb: '副詞',
   preposition: '前置詞',
@@ -38,6 +40,7 @@ export const PART_OF_SPEECH_VALUES: ReadonlyArray<PartOfSpeech> = [
   'interrogative-pronoun',
   'verb',
   'be-verb',
+  'auxiliary-verb',
   'adjective',
   'adverb',
   'preposition',
@@ -66,8 +69,7 @@ export type VerbForm =
   | 'future'
   | 'infinitive'
   | 'gerund'
-  | 'past-participle'
-  | 'modal';
+  | 'past-participle';
 
 export const VERB_FORM_LABELS: Record<VerbForm, string> = {
   base: '原形',
@@ -82,7 +84,6 @@ export const VERB_FORM_LABELS: Record<VerbForm, string> = {
   infinitive: '不定詞',
   gerund: '動名詞',
   'past-participle': '過去分詞',
-  modal: '助動詞',
 };
 
 /** 型安全なイテレーションのために使用する VerbForm の値一覧。 */
@@ -99,7 +100,6 @@ export const VERB_FORM_VALUES: ReadonlyArray<VerbForm> = [
   'infinitive',
   'gerund',
   'past-participle',
-  'modal',
 ];
 
 /** VerbForm 値のランタイム検証用タイプガード。 */

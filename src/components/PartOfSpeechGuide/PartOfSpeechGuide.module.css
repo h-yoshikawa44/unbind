@@ -143,7 +143,8 @@
 }
 
 .dialog [data-pos='verb'],
-.dialog [data-pos='be-verb'] {
+.dialog [data-pos='be-verb'],
+.dialog [data-pos='auxiliary-verb'] {
   --pos-color: var(--pos-verb);
 }
 

@@ -48,8 +48,7 @@ export const PART_OF_SPEECH_GUIDES: Record<PartOfSpeech, PartOfSpeechGuideEntry>
     hints: [
       '主語の直後に来ることが多く、「〜する」と訳せる',
       '時制や主語によって形が変わる（play / plays / played / playing）。形は「変化形」で選べる',
-      'can / will / must / should などの助動詞も「動詞」を選び、変化形で「助動詞」を指定する',
-      'be 動詞（am / is / are など）は「be動詞」を選ぶ',
+      'be 動詞（am / is / are など）は「be動詞」、can / will などは「助動詞」を選ぶ',
     ],
     examples: ['I [play] tennis every day.', 'She [studied] hard.'],
   },
@@ -61,6 +60,16 @@ export const PART_OF_SPEECH_GUIDES: Record<PartOfSpeech, PartOfSpeechGuideEntry>
       'be ＋ -ing で進行形、be ＋ 過去分詞で受動態になる',
     ],
     examples: ['He [is] a teacher.', 'They [were] in the park.'],
+  },
+  'auxiliary-verb': {
+    role: '動詞の前に置いて、可能・推量・義務・意志などの意味を付け加える。',
+    hints: [
+      'can / could / will / would / may / might / must / shall / should など',
+      '後ろには動詞の原形が来る（She can swim. の swim）',
+      '主語が三人称単数でも -s が付かない',
+      '疑問文では主語の前に出て、否定文では直後に not が付く（Can you…? / I cannot…）',
+    ],
+    examples: ['I [can] swim.', 'You [should] see a doctor.'],
   },
   adjective: {
     role: '名詞を修飾して、性質・状態・数量を表す。',

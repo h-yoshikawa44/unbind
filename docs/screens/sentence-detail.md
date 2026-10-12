@@ -140,6 +140,7 @@
 | 疑問代名詞 (`interrogative-pronoun`) | 疑問代名詞 |
 | 動詞 (`verb`)                        | 動詞       |
 | be動詞 (`be-verb`)                   | be動詞     |
+| 助動詞 (`auxiliary-verb`)            | 助動詞     |
 | 形容詞 (`adjective`)                 | 形容詞     |
 | 副詞 (`adverb`)                      | 副詞       |
 | 前置詞 (`preposition`)               | 前置詞     |
