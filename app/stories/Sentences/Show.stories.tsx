@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import Show from '../../pages/Sentences/Show';
-import { analyzedSentence, sampleTags, unanalyzedSentence } from '@/fixtures/sentences';
+import {
+  analyzedSentence,
+  patternSentence,
+  sampleTags,
+  unanalyzedSentence,
+} from '@/fixtures/sentences';
 
 const meta = {
   title: 'Pages/Sentences/Show',
@@ -19,6 +24,10 @@ export const Analyzed: Story = {};
 
 export const Unanalyzed: Story = {
   args: { sentence: unanalyzedSentence },
+};
+
+export const WithPattern: Story = {
+  args: { sentence: patternSentence },
 };
 
 export const NotFound: Story = {

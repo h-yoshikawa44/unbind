@@ -8,7 +8,7 @@
  * 関数シグネチャと戻り値の型は REST API 形に寄せてある。
  */
 import type { KVNamespace } from '@cloudflare/workers-types';
-import type { Sentence, TokenWithAnalysis } from '@/types';
+import type { Pattern, Sentence, TokenWithAnalysis } from '@/types';
 import { normalizeTags } from '@/types';
 import { storedSentencesSchema } from '@/schemas';
 
@@ -54,7 +54,7 @@ async function loadAll(kv: KVNamespace): Promise<Sentence[]> {
   // 未保存（初回）はキーが存在せず null になる。空データとして扱う。
   if (text === null) return [];
   // ここで検証して初めて Sentence[] とみなす。
-  // naturalTranslation / tags が無い古いデータはスキーマ側の既定値で補完される。
+  // naturalTranslation / tags / patterns が無い古いデータはスキーマ側の既定値で補完される。
   // JSON 破損・スキーマ不一致は握りつぶさず、検証エラーとして通知する。
   let json: unknown;
   try {
@@ -101,6 +101,7 @@ export async function createSentence(
     id,
     text,
     tokens,
+    patterns: [],
     naturalTranslation: '',
     tags: normalizeTags(tags),
     createdAt: now,
@@ -110,11 +111,12 @@ export async function createSentence(
   return sentence;
 }
 
-/** PUT /api/sentences/:id 相当 - 英文のトークン分析データを更新する */
+/** PUT /api/sentences/:id 相当 - 英文のトークン分析データ・パターンを更新する */
 export async function updateSentence(
   kv: KVNamespace,
   id: string,
   tokens: TokenWithAnalysis[],
+  patterns: Pattern[],
   naturalTranslation: string,
   tags: string[],
 ): Promise<Sentence> {
@@ -124,6 +126,7 @@ export async function updateSentence(
   const updated: Sentence = {
     ...sentences[idx],
     tokens,
+    patterns,
     naturalTranslation,
     tags: normalizeTags(tags),
     updatedAt: new Date().toISOString(),

@@ -65,6 +65,11 @@
   color: var(--text);
 }
 
+/* パターンの連結線（PatternConnectors）を重ねる基準。チップの位置はここを基準に測る。 */
+.tokenListWrap {
+  position: relative;
+}
+
 .tokenList {
   display: flex;
   flex-wrap: wrap;
@@ -179,12 +184,14 @@
   color: #3b82f6;
 }
 
-.tokenPosBadge[data-pos='pronoun'] {
+.tokenPosBadge[data-pos='pronoun'],
+.tokenPosBadge[data-pos='interrogative-pronoun'] {
   background: rgba(99, 102, 241, 0.15);
   color: #6366f1;
 }
 
-.tokenPosBadge[data-pos='verb'] {
+.tokenPosBadge[data-pos='verb'],
+.tokenPosBadge[data-pos='be-verb'] {
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
 }
@@ -218,6 +225,11 @@
 .tokenPosBadge[data-pos='interjection'] {
   background: rgba(34, 197, 94, 0.15);
   color: #22c55e;
+}
+
+.tokenPosBadge[data-pos='to-infinitive'] {
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
 }
 
 .tokenPosBadge[data-pos='other'] {
@@ -261,6 +273,26 @@
 
 .tokenChipActive .tokenNounformBadge,
 .tokenChipPhrase.tokenChipActive .tokenNounformBadge {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* to不定詞の用法バッジ */
+.tokenInfinitiveUsageBadge {
+  font-size: 0.6rem;
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(249, 115, 22, 0.08);
+  color: #f97316;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+}
+
+.tokenChipActive .tokenInfinitiveUsageBadge,
+.tokenChipPhrase.tokenChipActive .tokenInfinitiveUsageBadge {
   background: rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.9);
 }

@@ -2,6 +2,7 @@ import type { TokenWithAnalysis } from '@/types';
 import { PartOfSpeechSelect } from '@/components/PartOfSpeechSelect/PartOfSpeechSelect';
 import { VerbFormSelect } from '@/components/VerbFormSelect/VerbFormSelect';
 import { NounFormSelect } from '@/components/NounFormSelect/NounFormSelect';
+import { InfinitiveUsageSelect } from '@/components/InfinitiveUsageSelect/InfinitiveUsageSelect';
 import styles from '@/components/TokenAnalysisPanel/TokenAnalysisPanel.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
@@ -50,6 +51,16 @@ export function TokenAnalysisPanel({ token, onChange, onSplit }: Props) {
           <div className={`${styles.fieldGroup} ${styles.fieldGroupPos}`}>
             <label className={styles.fieldLabel}>変化形</label>
             <VerbFormSelect value={token.verbForm} onChange={(v) => update('verbForm', v)} />
+          </div>
+        )}
+
+        {token.partOfSpeech === 'to-infinitive' && (
+          <div className={`${styles.fieldGroup} ${styles.fieldGroupPos}`}>
+            <label className={styles.fieldLabel}>変化形</label>
+            <InfinitiveUsageSelect
+              value={token.infinitiveUsage}
+              onChange={(v) => update('infinitiveUsage', v)}
+            />
           </div>
         )}
 

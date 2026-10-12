@@ -71,11 +71,18 @@ const app = new Hono<{ Bindings: Bindings }>()
     );
     return c.redirect(`/sentences/${sentence.id}`, 303);
   })
-  // 英文のトークン分析データを更新する。
+  // 英文のトークン分析データ・パターンを更新する。
   .put('/sentences/:id', zValidator('json', updateSentenceBodySchema), async (c) => {
     const id = c.req.param('id');
     const body = c.req.valid('json');
-    await updateSentence(c.env.UNBIND_KV, id, body.tokens, body.naturalTranslation, body.tags);
+    await updateSentence(
+      c.env.UNBIND_KV,
+      id,
+      body.tokens,
+      body.patterns,
+      body.naturalTranslation,
+      body.tags,
+    );
     return c.redirect(`/sentences/${id}`, 303);
   })
   // 英文を削除する。

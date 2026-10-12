@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vite-plus/test';
 import * as stories from '@/components/TokenAnalysisPanel/TokenAnalysisPanel.stories';
 
-const { Noun, VerbPhrase, Unanalyzed } = composeStories(stories);
+const { Noun, VerbPhrase, ToInfinitive, Unanalyzed } = composeStories(stories);
 
 describe('TokenAnalysisPanel', () => {
   describe('単語トークン（名詞）', () => {
@@ -90,6 +90,27 @@ describe('TokenAnalysisPanel', () => {
     it('onSplit を渡さなければ分解ボタンは出さない', () => {
       render(<VerbPhrase onSplit={undefined} />);
       expect(screen.queryByRole('button', { name: '分解する' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('単語トークン（to不定詞）', () => {
+    it('to不定詞のときは変化形として用法の選択欄を出し、数の選択欄は出さない', () => {
+      render(<ToInfinitive />);
+      expect(screen.getByText('変化形')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('副詞的用法')).toBeInTheDocument();
+      expect(screen.queryByText('数')).not.toBeInTheDocument();
+    });
+
+    it('用法を変えると infinitiveUsage を更新したトークンが onChange に渡る', async () => {
+      const user = userEvent.setup();
+      render(<ToInfinitive />);
+
+      await user.selectOptions(screen.getByDisplayValue('副詞的用法'), '名詞的用法');
+
+      expect(ToInfinitive.args.onChange).toHaveBeenCalledWith({
+        ...ToInfinitive.args.token,
+        infinitiveUsage: 'noun',
+      });
     });
   });
 
