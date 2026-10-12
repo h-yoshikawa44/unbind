@@ -107,6 +107,11 @@ export function isVerbForm(value: string): value is VerbForm {
   return value in VERB_FORM_LABELS;
 }
 
+/** 変化形（VerbForm）を選べる品詞か。be動詞も動詞と同じ変化形（was / been / being など）を持つ。 */
+export function hasVerbForm(partOfSpeech: PartOfSpeech | null): boolean {
+  return partOfSpeech === 'verb' || partOfSpeech === 'be-verb';
+}
+
 export type NounForm = 'singular' | 'plural';
 
 export const NOUN_FORM_LABELS: Record<NounForm, string> = {

@@ -58,6 +58,7 @@ export const PART_OF_SPEECH_GUIDES: Record<PartOfSpeech, PartOfSpeechGuideEntry>
       'am / is / are / was / were / be / been / being',
       '主語 ＝ 後ろの語 の関係を作る（He is a teacher. → He ＝ a teacher）',
       'be ＋ -ing で進行形、be ＋ 過去分詞で受動態になる',
+      '動詞と同じく「変化形」を選べる（was → 過去形、been → 過去分詞、being → 動名詞 など）',
     ],
     examples: ['He [is] a teacher.', 'They [were] in the park.'],
   },

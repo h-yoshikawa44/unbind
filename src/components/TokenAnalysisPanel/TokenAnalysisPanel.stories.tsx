@@ -44,6 +44,18 @@ export const VerbPhrase: Story = {
   args: { token: tokenOf(analyzedSentence, 's1-t1') },
 };
 
+/** be動詞: 動詞と同じ変化形の選択欄が出る。 */
+export const BeVerb: Story = {
+  args: {
+    token: {
+      ...tokenOf(unanalyzedSentence, 's2-t0'),
+      text: 'was',
+      partOfSpeech: 'be-verb',
+      verbForm: 'past',
+    },
+  },
+};
+
 /** to不定詞: 用法（名詞的/形容詞的/副詞的）の選択欄が出る。 */
 export const ToInfinitive: Story = {
   args: {

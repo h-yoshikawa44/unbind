@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vite-plus/test';
 import * as stories from '@/components/TokenAnalysisPanel/TokenAnalysisPanel.stories';
 
-const { Noun, VerbPhrase, ToInfinitive, Unanalyzed } = composeStories(stories);
+const { Noun, VerbPhrase, BeVerb, ToInfinitive, Unanalyzed } = composeStories(stories);
 
 describe('TokenAnalysisPanel', () => {
   describe('単語トークン（名詞）', () => {
@@ -90,6 +90,26 @@ describe('TokenAnalysisPanel', () => {
     it('onSplit を渡さなければ分解ボタンは出さない', () => {
       render(<VerbPhrase onSplit={undefined} />);
       expect(screen.queryByRole('button', { name: '分解する' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('単語トークン（be動詞）', () => {
+    it('be動詞のときは変化形の選択欄を出す', () => {
+      render(<BeVerb />);
+      expect(screen.getByText('変化形')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('過去形')).toBeInTheDocument();
+    });
+
+    it('変化形を変えると verbForm を更新したトークンが onChange に渡る', async () => {
+      const user = userEvent.setup();
+      render(<BeVerb />);
+
+      await user.selectOptions(screen.getByDisplayValue('過去形'), '過去分詞');
+
+      expect(BeVerb.args.onChange).toHaveBeenCalledWith({
+        ...BeVerb.args.token,
+        verbForm: 'past-participle',
+      });
     });
   });
 

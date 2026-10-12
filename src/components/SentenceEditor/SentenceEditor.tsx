@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Pattern, Sentence, TokenWithAnalysis } from '@/types';
 import {
+  hasVerbForm,
   INFINITIVE_USAGE_LABELS,
   NOUN_FORM_LABELS,
   PART_OF_SPEECH_LABELS,
@@ -276,7 +277,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
                       {token.partOfSpeech ? PART_OF_SPEECH_LABELS[token.partOfSpeech] : '—'}
                     </span>
                   )}
-                  {!isSelecting && token.partOfSpeech === 'verb' && token.verbForm && (
+                  {!isSelecting && hasVerbForm(token.partOfSpeech) && token.verbForm && (
                     <span className={styles.tokenVerbformBadge}>
                       {VERB_FORM_LABELS[token.verbForm]}
                     </span>
