@@ -1,0 +1,13 @@
+diff --git a/node_modules/vite-ssr-components/dist/plugin/index.js b/node_modules/vite-ssr-components/dist/plugin/index.js
+index d252eb2..8841070 100644
+--- a/node_modules/vite-ssr-components/dist/plugin/index.js
++++ b/node_modules/vite-ssr-components/dist/plugin/index.js
+@@ -475,7 +475,7 @@ function injectManifest(state = createBuildState()) {
+ 				const asset = bundle[MANIFEST_FILE_NAME];
+ 				if (asset.type !== "asset") return;
+ 				state.clientManifest = typeof asset.source === "string" ? asset.source : new TextDecoder().decode(asset.source);
+-				delete bundle[MANIFEST_FILE_NAME];
++				// unbind: client と server を別々に vp build するため、manifest をクライアント出力に残す（server ビルドが dist/.vite/manifest.json を読む）。
+ 			}
+ 		}
+ 	}, {

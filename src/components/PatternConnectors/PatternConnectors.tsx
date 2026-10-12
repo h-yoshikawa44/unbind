@@ -58,6 +58,8 @@ export function usePatternConnectors(patterns: readonly Pattern[], tokens: reado
   // 配置が変わると新しいラベルが描画されるので、その実寸で測り直す（大きさが変わらなければ配置も変わらず止まる）。
   useLayoutEffect(() => {
     measure();
+    // measure は layout を読まないが、layout の変化を再計測のきっかけにしたいので依存に含める。
+    // eslint-disable-next-line react/exhaustive-effect-dependencies
   }, [measure, layout]);
 
   // 領域の幅（折り返し位置）やチップの大きさ（バッジの増減・選択モード）が変わったら測り直す。

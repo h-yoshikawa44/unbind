@@ -55,7 +55,12 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
   const activeToken = tokens.find((t) => t.id === activeId) ?? null;
   const activePattern = patterns.find((i) => i.id === activePatternId) ?? null;
 
-  const connectors = usePatternConnectors(patterns, tokens);
+  const {
+    containerRef: connectorsContainerRef,
+    chipRef,
+    layout: connectorLayout,
+    listStyle: tokenListStyle,
+  } = usePatternConnectors(patterns, tokens);
 
   const handleTokenClick = (id: string) => {
     if (isSelecting) {
@@ -246,8 +251,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
           </button>
         </div>
 
-        <div className={styles.tokenListWrap} ref={connectors.containerRef}>
-          <div className={styles.tokenList} role="list" style={connectors.listStyle}>
+        <div className={styles.tokenListWrap} ref={connectorsContainerRef}>
+          <div className={styles.tokenList} role="list" style={tokenListStyle}>
             {tokens.map((token) => {
               const isPhrase = (token.memberTexts?.length ?? 0) > 1;
               const isActive = activeId === token.id;
@@ -264,7 +269,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
               return (
                 <button
                   key={token.id}
-                  ref={connectors.chipRef(token.id)}
+                  ref={chipRef(token.id)}
                   type="button"
                   role="listitem"
                   className={chipClassName}
@@ -307,7 +312,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
             })}
           </div>
           <PatternConnectors
-            layout={connectors.layout}
+            layout={connectorLayout}
             patterns={patterns}
             tokens={tokens}
             activePatternId={isSelecting ? null : activePatternId}
