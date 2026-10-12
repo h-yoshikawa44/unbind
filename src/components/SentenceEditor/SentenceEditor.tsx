@@ -299,7 +299,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
                   )}
                   {!isSelecting && token.idiomMeaning && (
                     <span className={`${styles.tokenChipMeaning} ${styles.tokenChipMeaningIdiom}`}>
-                      慣: {token.idiomMeaning}
+                      {token.idiomMeaning}
                     </span>
                   )}
                 </button>

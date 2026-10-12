@@ -44,7 +44,7 @@ describe('SentenceEditor', () => {
       expect(chip('I')).toHaveTextContent('代名詞');
       expect(chip('looked up')).toHaveTextContent('動詞');
       expect(chip('looked up')).toHaveTextContent('過去形');
-      expect(chip('looked up')).toHaveTextContent('慣: 調べた');
+      expect(chip('looked up')).toHaveTextContent('調べた');
       expect(chip('word')).toHaveTextContent('単数形');
       expect(chip('word')).toHaveTextContent('単語');
     });
