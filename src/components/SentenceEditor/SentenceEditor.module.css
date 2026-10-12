@@ -178,63 +178,57 @@
   white-space: nowrap;
 }
 
-/* 品詞ごとの色分け */
+/* 品詞ごとの色分け（色は index.css の --pos-* トークン） */
+.tokenPosBadge[data-pos] {
+  background: color-mix(in srgb, var(--pos-color) 15%, transparent);
+  color: var(--pos-color);
+}
+
 .tokenPosBadge[data-pos='noun'] {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  --pos-color: var(--pos-noun);
 }
 
 .tokenPosBadge[data-pos='pronoun'],
 .tokenPosBadge[data-pos='interrogative-pronoun'] {
-  background: rgba(99, 102, 241, 0.15);
-  color: #6366f1;
+  --pos-color: var(--pos-pronoun);
 }
 
 .tokenPosBadge[data-pos='verb'],
 .tokenPosBadge[data-pos='be-verb'] {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  --pos-color: var(--pos-verb);
 }
 
 .tokenPosBadge[data-pos='adjective'] {
-  background: rgba(139, 92, 246, 0.15);
-  color: #8b5cf6;
+  --pos-color: var(--pos-adjective);
 }
 
 .tokenPosBadge[data-pos='adverb'] {
-  background: rgba(20, 184, 166, 0.15);
-  color: #14b8a6;
+  --pos-color: var(--pos-adverb);
 }
 
 .tokenPosBadge[data-pos='preposition'] {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  --pos-color: var(--pos-preposition);
 }
 
 .tokenPosBadge[data-pos='conjunction'] {
-  background: rgba(236, 72, 153, 0.15);
-  color: #ec4899;
+  --pos-color: var(--pos-conjunction);
 }
 
 .tokenPosBadge[data-pos='definite-article'],
 .tokenPosBadge[data-pos='indefinite-article'] {
-  background: rgba(100, 116, 139, 0.15);
-  color: #64748b;
+  --pos-color: var(--pos-article);
 }
 
 .tokenPosBadge[data-pos='interjection'] {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  --pos-color: var(--pos-interjection);
 }
 
 .tokenPosBadge[data-pos='to-infinitive'] {
-  background: rgba(249, 115, 22, 0.15);
-  color: #f97316;
+  --pos-color: var(--pos-to-infinitive);
 }
 
 .tokenPosBadge[data-pos='other'] {
-  background: rgba(107, 114, 128, 0.15);
-  color: #6b7280;
+  --pos-color: var(--pos-other);
 }
 
 /* 動詞変化形バッジ */
