@@ -65,6 +65,11 @@
   color: var(--text);
 }
 
+/* 選択モードのボタン類とは役割が違うので右端に寄せる。 */
+.guideButton {
+  margin-left: auto;
+}
+
 /* パターンの連結線（PatternConnectors）を重ねる基準。チップの位置はここを基準に測る。 */
 .tokenListWrap {
   position: relative;

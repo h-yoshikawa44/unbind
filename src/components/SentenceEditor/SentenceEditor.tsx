@@ -15,6 +15,7 @@ import {
   usePatternConnectors,
 } from '@/components/PatternConnectors/PatternConnectors';
 import { TagInput } from '@/components/TagInput/TagInput';
+import { PartOfSpeechGuide } from '@/components/PartOfSpeechGuide/PartOfSpeechGuide';
 import styles from '@/components/SentenceEditor/SentenceEditor.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
@@ -44,6 +45,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
   const [selectMode, setSelectMode] = useState<SelectMode | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [isDirty, setIsDirty] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const isPhraseMode = selectMode === 'phrase';
   const isPatternMode = selectMode === 'pattern';
@@ -234,6 +236,13 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
               パターンを構成するトークンを2つ以上選択してください（離れていても選べます）
             </span>
           )}
+          <button
+            type="button"
+            className={`${buttonStyles.btn} ${buttonStyles.btnSm} ${buttonStyles.btnOutline} ${styles.guideButton}`}
+            onClick={() => setIsGuideOpen(true)}
+          >
+            品詞ガイド
+          </button>
         </div>
 
         <div className={styles.tokenListWrap} ref={connectors.containerRef}>
@@ -357,6 +366,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
           </div>
         )
       )}
+
+      <PartOfSpeechGuide open={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </div>
   );
 }

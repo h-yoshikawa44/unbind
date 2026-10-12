@@ -389,4 +389,28 @@ describe('SentenceEditor', () => {
       expect(Analyzed.args.onBack).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('品詞ガイド', () => {
+    it('品詞ガイドボタンでモーダルを開き、閉じるボタンで閉じる', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: '品詞ガイド' }));
+      expect(screen.getByRole('dialog', { name: '品詞ガイド' })).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: '閉じる' }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('閉じた後にもう一度開ける', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      await user.click(screen.getByRole('button', { name: '品詞ガイド' }));
+      await user.click(screen.getByRole('button', { name: '閉じる' }));
+
+      await user.click(screen.getByRole('button', { name: '品詞ガイド' }));
+      expect(screen.getByRole('dialog', { name: '品詞ガイド' })).toBeInTheDocument();
+    });
+  });
 });
