@@ -120,6 +120,19 @@ code {
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+
+  /* 品詞ごとの色（トークンの品詞バッジ・品詞ガイドで共有。light / dark 共通） */
+  --pos-noun: #3b82f6;
+  --pos-pronoun: #6366f1;
+  --pos-verb: #ef4444;
+  --pos-adjective: #8b5cf6;
+  --pos-adverb: #14b8a6;
+  --pos-preposition: #f59e0b;
+  --pos-conjunction: #ec4899;
+  --pos-article: #64748b;
+  --pos-interjection: #22c55e;
+  --pos-to-infinitive: #f97316;
+  --pos-other: #6b7280;
 }
 
 @media (prefers-color-scheme: dark) {

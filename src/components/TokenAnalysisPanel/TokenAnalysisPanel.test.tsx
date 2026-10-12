@@ -1,10 +1,18 @@
 import { composeStories } from '@storybook/react-vite';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vite-plus/test';
 import * as stories from '@/components/TokenAnalysisPanel/TokenAnalysisPanel.stories';
 
-const { Noun, VerbPhrase, ToInfinitive, Unanalyzed } = composeStories(stories);
+const {
+  Noun,
+  VerbPhrase,
+  BeVerb,
+  AuxiliaryVerb,
+  AuxiliaryVerbWithStaleForm,
+  ToInfinitive,
+  Unanalyzed,
+} = composeStories(stories);
 
 describe('TokenAnalysisPanel', () => {
   describe('単語トークン（名詞）', () => {
@@ -90,6 +98,56 @@ describe('TokenAnalysisPanel', () => {
     it('onSplit を渡さなければ分解ボタンは出さない', () => {
       render(<VerbPhrase onSplit={undefined} />);
       expect(screen.queryByRole('button', { name: '分解する' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('単語トークン（be動詞）', () => {
+    it('be動詞のときは変化形の選択欄を出す', () => {
+      render(<BeVerb />);
+      expect(screen.getByText('変化形')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('過去形')).toBeInTheDocument();
+    });
+
+    it('変化形を変えると verbForm を更新したトークンが onChange に渡る', async () => {
+      const user = userEvent.setup();
+      render(<BeVerb />);
+
+      await user.selectOptions(screen.getByDisplayValue('過去形'), '過去分詞');
+
+      expect(BeVerb.args.onChange).toHaveBeenCalledWith({
+        ...BeVerb.args.token,
+        verbForm: 'past-participle',
+      });
+    });
+  });
+
+  describe('単語トークン（助動詞）', () => {
+    it('助動詞のときは現在形・過去形だけを変化形の選択肢に出す', () => {
+      render(<AuxiliaryVerb />);
+      const select = screen.getByDisplayValue('過去形');
+      expect(
+        within(select)
+          .getAllByRole('option')
+          .map((o) => o.textContent),
+      ).toEqual(['-- 選択 --', '現在形', '過去形']);
+    });
+
+    it('助動詞では選べない変化形が残っていれば未選択として表示する', () => {
+      render(<AuxiliaryVerbWithStaleForm />);
+      expect(screen.getByText('変化形')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('-- 選択 --')).toBeInTheDocument();
+    });
+
+    it('変化形を変えると verbForm を更新したトークンが onChange に渡る', async () => {
+      const user = userEvent.setup();
+      render(<AuxiliaryVerb />);
+
+      await user.selectOptions(screen.getByDisplayValue('過去形'), '現在形');
+
+      expect(AuxiliaryVerb.args.onChange).toHaveBeenCalledWith({
+        ...AuxiliaryVerb.args.token,
+        verbForm: 'present',
+      });
     });
   });
 

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 import { VerbFormSelect } from '@/components/VerbFormSelect/VerbFormSelect';
+import { AUXILIARY_VERB_FORM_VALUES } from '@/types';
 
 const meta = {
   title: 'Components/VerbFormSelect',
@@ -31,4 +32,9 @@ export const Unselected: Story = {};
 
 export const Selected: Story = {
   args: { value: 'past' },
+};
+
+/** 選択肢を絞り込んだ状態（助動詞は現在形・過去形のみ）。 */
+export const LimitedOptions: Story = {
+  args: { options: AUXILIARY_VERB_FORM_VALUES },
 };

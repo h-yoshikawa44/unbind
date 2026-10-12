@@ -44,6 +44,42 @@ export const VerbPhrase: Story = {
   args: { token: tokenOf(analyzedSentence, 's1-t1') },
 };
 
+/** be動詞: 動詞と同じ変化形の選択欄が出る。 */
+export const BeVerb: Story = {
+  args: {
+    token: {
+      ...tokenOf(unanalyzedSentence, 's2-t0'),
+      text: 'was',
+      partOfSpeech: 'be-verb',
+      verbForm: 'past',
+    },
+  },
+};
+
+/** 助動詞: 変化形の選択欄が出る（現在形・過去形のみ）。 */
+export const AuxiliaryVerb: Story = {
+  args: {
+    token: {
+      ...tokenOf(unanalyzedSentence, 's2-t0'),
+      text: 'could',
+      partOfSpeech: 'auxiliary-verb',
+      verbForm: 'past',
+    },
+  },
+};
+
+/** 動詞で「過去分詞」を選んでから助動詞に変えた状態: 選べない変化形は未選択として表示する。 */
+export const AuxiliaryVerbWithStaleForm: Story = {
+  args: {
+    token: {
+      ...tokenOf(unanalyzedSentence, 's2-t0'),
+      text: 'could',
+      partOfSpeech: 'auxiliary-verb',
+      verbForm: 'past-participle',
+    },
+  },
+};
+
 /** to不定詞: 用法（名詞的/形容詞的/副詞的）の選択欄が出る。 */
 export const ToInfinitive: Story = {
   args: {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Pattern, Sentence, TokenWithAnalysis } from '@/types';
 import {
+  effectiveVerbForm,
   INFINITIVE_USAGE_LABELS,
   NOUN_FORM_LABELS,
   PART_OF_SPEECH_LABELS,
@@ -15,6 +16,7 @@ import {
   usePatternConnectors,
 } from '@/components/PatternConnectors/PatternConnectors';
 import { TagInput } from '@/components/TagInput/TagInput';
+import { PartOfSpeechGuide } from '@/components/PartOfSpeechGuide/PartOfSpeechGuide';
 import styles from '@/components/SentenceEditor/SentenceEditor.module.css';
 import buttonStyles from '@/styles/button.module.css';
 
@@ -44,6 +46,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
   const [selectMode, setSelectMode] = useState<SelectMode | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [isDirty, setIsDirty] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const isPhraseMode = selectMode === 'phrase';
   const isPatternMode = selectMode === 'pattern';
@@ -234,6 +237,13 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
               パターンを構成するトークンを2つ以上選択してください（離れていても選べます）
             </span>
           )}
+          <button
+            type="button"
+            className={`${buttonStyles.btn} ${buttonStyles.btnSm} ${buttonStyles.btnOutline} ${styles.guideButton}`}
+            onClick={() => setIsGuideOpen(true)}
+          >
+            品詞ガイド
+          </button>
         </div>
 
         <div className={styles.tokenListWrap} ref={connectors.containerRef}>
@@ -242,6 +252,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
               const isPhrase = (token.memberTexts?.length ?? 0) > 1;
               const isActive = activeId === token.id;
               const isSelected = selected.has(token.id);
+              // 品詞を変えた後に残っている、その品詞では選べない変化形は表示しない。
+              const verbForm = effectiveVerbForm(token.partOfSpeech, token.verbForm);
 
               const chipClasses = [styles.tokenChip];
               if (isPhrase) chipClasses.push(styles.tokenChipPhrase);
@@ -267,10 +279,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
                       {token.partOfSpeech ? PART_OF_SPEECH_LABELS[token.partOfSpeech] : '—'}
                     </span>
                   )}
-                  {!isSelecting && token.partOfSpeech === 'verb' && token.verbForm && (
-                    <span className={styles.tokenVerbformBadge}>
-                      {VERB_FORM_LABELS[token.verbForm]}
-                    </span>
+                  {!isSelecting && verbForm && (
+                    <span className={styles.tokenVerbformBadge}>{VERB_FORM_LABELS[verbForm]}</span>
                   )}
                   {!isSelecting && token.partOfSpeech === 'noun' && token.nounForm && (
                     <span className={styles.tokenNounformBadge}>
@@ -289,7 +299,7 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
                   )}
                   {!isSelecting && token.idiomMeaning && (
                     <span className={`${styles.tokenChipMeaning} ${styles.tokenChipMeaningIdiom}`}>
-                      慣: {token.idiomMeaning}
+                      {token.idiomMeaning}
                     </span>
                   )}
                 </button>
@@ -357,6 +367,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
           </div>
         )
       )}
+
+      <PartOfSpeechGuide open={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </div>
   );
 }

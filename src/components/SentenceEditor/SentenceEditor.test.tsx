@@ -44,7 +44,7 @@ describe('SentenceEditor', () => {
       expect(chip('I')).toHaveTextContent('代名詞');
       expect(chip('looked up')).toHaveTextContent('動詞');
       expect(chip('looked up')).toHaveTextContent('過去形');
-      expect(chip('looked up')).toHaveTextContent('慣: 調べた');
+      expect(chip('looked up')).toHaveTextContent('調べた');
       expect(chip('word')).toHaveTextContent('単数形');
       expect(chip('word')).toHaveTextContent('単語');
     });
@@ -98,6 +98,32 @@ describe('SentenceEditor', () => {
       );
       // 保存後は未変更状態に戻る。
       expect(save).toBeDisabled();
+    });
+
+    it('変化形のバッジは動詞・be動詞・助動詞のときだけ出す', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      await user.click(chip('looked up'));
+
+      await user.selectOptions(screen.getByDisplayValue('動詞'), 'be動詞');
+      expect(chip('looked up')).toHaveTextContent('過去形');
+
+      await user.selectOptions(screen.getByDisplayValue('be動詞'), '助動詞');
+      expect(chip('looked up')).toHaveTextContent('過去形');
+
+      await user.selectOptions(screen.getByDisplayValue('助動詞'), '名詞');
+      expect(chip('looked up')).not.toHaveTextContent('過去形');
+    });
+
+    it('助動詞では選べない変化形は、助動詞に変えるとバッジに出さない', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      await user.click(chip('looked up'));
+
+      await user.selectOptions(screen.getByDisplayValue('過去形'), '過去分詞');
+      await user.selectOptions(screen.getByDisplayValue('動詞'), '助動詞');
+
+      expect(chip('looked up')).not.toHaveTextContent('過去分詞');
     });
   });
 
@@ -387,6 +413,30 @@ describe('SentenceEditor', () => {
 
       expect(confirmSpy).toHaveBeenCalledWith('保存していない変更があります。戻りますか？');
       expect(Analyzed.args.onBack).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('品詞ガイド', () => {
+    it('品詞ガイドボタンでモーダルを開き、閉じるボタンで閉じる', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: '品詞ガイド' }));
+      expect(screen.getByRole('dialog', { name: '品詞ガイド' })).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: '閉じる' }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('閉じた後にもう一度開ける', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      await user.click(screen.getByRole('button', { name: '品詞ガイド' }));
+      await user.click(screen.getByRole('button', { name: '閉じる' }));
+
+      await user.click(screen.getByRole('button', { name: '品詞ガイド' }));
+      expect(screen.getByRole('dialog', { name: '品詞ガイド' })).toBeInTheDocument();
     });
   });
 });
