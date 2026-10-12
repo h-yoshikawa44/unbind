@@ -33,7 +33,7 @@ function syncUrl(tags: string[], q: string, page: number) {
 }
 
 export default function Index({ sentences, allTags }: PageProps<'Sentences/Index'>) {
-  const initial = useMemo(readInitialSearch, []);
+  const initial = useMemo(() => readInitialSearch(), []);
   const [selectedTags, setSelectedTags] = useState<string[]>(initial.tags);
   const [keyword, setKeyword] = useState(initial.q);
   const [page, setPage] = useState(initial.page);
