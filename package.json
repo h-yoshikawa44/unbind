@@ -23,7 +23,8 @@
     "check:oxfmt": "vp fmt --check",
     "fix": "npm run lint -- --fix",
     "fix:oxlint": "npm run lint:oxlint -- --fix",
-    "fix:oxfmt": "npm run check:oxfmt -- --write"
+    "fix:oxfmt": "npm run check:oxfmt -- --write",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@hono/inertia": "^0.8.0",
@@ -51,6 +52,7 @@
     "jsdom": "^30.1.1",
     "miniflare": "^4.20260730.0",
     "npm-run-all2": "^9.0.3",
+    "patch-package": "^8.0.1",
     "storybook": "^10.6.1",
     "typescript": "^6.0.3",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
