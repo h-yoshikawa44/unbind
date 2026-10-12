@@ -107,9 +107,39 @@ export function isVerbForm(value: string): value is VerbForm {
   return value in VERB_FORM_LABELS;
 }
 
-/** 変化形（VerbForm）を選べる品詞か。be動詞も動詞と同じ変化形（was / been / being など）を持つ。 */
+/** 助動詞が取りうる変化形。can → could のように現在形・過去形だけを持つ（進行形・完了形・分詞にはならない）。 */
+export const AUXILIARY_VERB_FORM_VALUES: ReadonlyArray<VerbForm> = ['present', 'past'];
+
+/**
+ * その品詞で選べる変化形（VerbForm）の一覧。変化形を持たない品詞は空配列。
+ * be動詞は動詞と同じ変化形（was / been / being など）を持つ。
+ */
+export function verbFormsOf(partOfSpeech: PartOfSpeech | null): ReadonlyArray<VerbForm> {
+  switch (partOfSpeech) {
+    case 'verb':
+    case 'be-verb':
+      return VERB_FORM_VALUES;
+    case 'auxiliary-verb':
+      return AUXILIARY_VERB_FORM_VALUES;
+    default:
+      return [];
+  }
+}
+
+/** 変化形（VerbForm）を選べる品詞か。 */
 export function hasVerbForm(partOfSpeech: PartOfSpeech | null): boolean {
-  return partOfSpeech === 'verb' || partOfSpeech === 'be-verb';
+  return verbFormsOf(partOfSpeech).length > 0;
+}
+
+/**
+ * その品詞で有効な変化形だけを返す。品詞を変えた後に残っている、新しい品詞では選べない変化形は null 扱いにする
+ * （例: 動詞で「過去分詞」を選んでから助動詞に変えた場合）。
+ */
+export function effectiveVerbForm(
+  partOfSpeech: PartOfSpeech | null,
+  verbForm: VerbForm | null,
+): VerbForm | null {
+  return verbForm !== null && verbFormsOf(partOfSpeech).includes(verbForm) ? verbForm : null;
 }
 
 export type NounForm = 'singular' | 'plural';

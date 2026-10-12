@@ -100,7 +100,7 @@ describe('SentenceEditor', () => {
       expect(save).toBeDisabled();
     });
 
-    it('変化形のバッジは動詞・be動詞のときだけ出す', async () => {
+    it('変化形のバッジは動詞・be動詞・助動詞のときだけ出す', async () => {
       const user = userEvent.setup();
       render(<Analyzed />);
       await user.click(chip('looked up'));
@@ -108,8 +108,22 @@ describe('SentenceEditor', () => {
       await user.selectOptions(screen.getByDisplayValue('動詞'), 'be動詞');
       expect(chip('looked up')).toHaveTextContent('過去形');
 
-      await user.selectOptions(screen.getByDisplayValue('be動詞'), '名詞');
+      await user.selectOptions(screen.getByDisplayValue('be動詞'), '助動詞');
+      expect(chip('looked up')).toHaveTextContent('過去形');
+
+      await user.selectOptions(screen.getByDisplayValue('助動詞'), '名詞');
       expect(chip('looked up')).not.toHaveTextContent('過去形');
+    });
+
+    it('助動詞では選べない変化形は、助動詞に変えるとバッジに出さない', async () => {
+      const user = userEvent.setup();
+      render(<Analyzed />);
+      await user.click(chip('looked up'));
+
+      await user.selectOptions(screen.getByDisplayValue('過去形'), '過去分詞');
+      await user.selectOptions(screen.getByDisplayValue('動詞'), '助動詞');
+
+      expect(chip('looked up')).not.toHaveTextContent('過去分詞');
     });
   });
 

@@ -68,6 +68,7 @@ export const PART_OF_SPEECH_GUIDES: Record<PartOfSpeech, PartOfSpeechGuideEntry>
       'can / could / will / would / may / might / must / shall / should など',
       '後ろには動詞の原形が来る（She can swim. の swim）',
       '主語が三人称単数でも -s が付かない',
+      '変化形は現在形（can / will / may）と過去形（could / would / might）だけを選べる',
       '疑問文では主語の前に出て、否定文では直後に not が付く（Can you…? / I cannot…）',
     ],
     examples: ['I [can] swim.', 'You [should] see a doctor.'],

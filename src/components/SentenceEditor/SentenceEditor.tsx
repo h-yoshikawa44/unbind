@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Pattern, Sentence, TokenWithAnalysis } from '@/types';
 import {
-  hasVerbForm,
+  effectiveVerbForm,
   INFINITIVE_USAGE_LABELS,
   NOUN_FORM_LABELS,
   PART_OF_SPEECH_LABELS,
@@ -252,6 +252,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
               const isPhrase = (token.memberTexts?.length ?? 0) > 1;
               const isActive = activeId === token.id;
               const isSelected = selected.has(token.id);
+              // 品詞を変えた後に残っている、その品詞では選べない変化形は表示しない。
+              const verbForm = effectiveVerbForm(token.partOfSpeech, token.verbForm);
 
               const chipClasses = [styles.tokenChip];
               if (isPhrase) chipClasses.push(styles.tokenChipPhrase);
@@ -277,10 +279,8 @@ export function SentenceEditor({ sentence, onSave, onBack, tagSuggestions = [] }
                       {token.partOfSpeech ? PART_OF_SPEECH_LABELS[token.partOfSpeech] : '—'}
                     </span>
                   )}
-                  {!isSelecting && hasVerbForm(token.partOfSpeech) && token.verbForm && (
-                    <span className={styles.tokenVerbformBadge}>
-                      {VERB_FORM_LABELS[token.verbForm]}
-                    </span>
+                  {!isSelecting && verbForm && (
+                    <span className={styles.tokenVerbformBadge}>{VERB_FORM_LABELS[verbForm]}</span>
                   )}
                   {!isSelecting && token.partOfSpeech === 'noun' && token.nounForm && (
                     <span className={styles.tokenNounformBadge}>

@@ -1,5 +1,5 @@
 import type { TokenWithAnalysis } from '@/types';
-import { hasVerbForm } from '@/types';
+import { effectiveVerbForm, hasVerbForm, verbFormsOf } from '@/types';
 import { PartOfSpeechSelect } from '@/components/PartOfSpeechSelect/PartOfSpeechSelect';
 import { VerbFormSelect } from '@/components/VerbFormSelect/VerbFormSelect';
 import { NounFormSelect } from '@/components/NounFormSelect/NounFormSelect';
@@ -51,7 +51,11 @@ export function TokenAnalysisPanel({ token, onChange, onSplit }: Props) {
         {hasVerbForm(token.partOfSpeech) && (
           <div className={`${styles.fieldGroup} ${styles.fieldGroupPos}`}>
             <label className={styles.fieldLabel}>変化形</label>
-            <VerbFormSelect value={token.verbForm} onChange={(v) => update('verbForm', v)} />
+            <VerbFormSelect
+              value={effectiveVerbForm(token.partOfSpeech, token.verbForm)}
+              onChange={(v) => update('verbForm', v)}
+              options={verbFormsOf(token.partOfSpeech)}
+            />
           </div>
         )}
 

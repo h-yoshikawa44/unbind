@@ -5,13 +5,22 @@ import { describe, expect, it } from 'vite-plus/test';
 import { VERB_FORM_VALUES } from '@/types';
 import * as stories from '@/components/VerbFormSelect/VerbFormSelect.stories';
 
-const { Unselected, Selected } = composeStories(stories);
+const { Unselected, Selected, LimitedOptions } = composeStories(stories);
 
 describe('VerbFormSelect', () => {
   it('未選択の選択肢 + 全変化形を選択肢として表示する', () => {
     render(<Unselected />);
     expect(screen.getAllByRole('option')).toHaveLength(VERB_FORM_VALUES.length + 1);
     expect(screen.getByRole('combobox')).toHaveValue('');
+  });
+
+  it('options を渡すとその変化形だけを選択肢にする', () => {
+    render(<LimitedOptions />);
+    expect(screen.getAllByRole('option').map((o) => o.textContent)).toEqual([
+      '-- 選択 --',
+      '現在形',
+      '過去形',
+    ]);
   });
 
   it('value に渡した変化形が選択される', () => {
