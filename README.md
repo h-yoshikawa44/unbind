@@ -8,7 +8,7 @@
 
 base
 
-- Node.js: 24.21.0
+- Node.js: 24.22.1
 - TypeScript: 6.0.3
 - React: 19.3.0
 - Hono: 4.13.13
