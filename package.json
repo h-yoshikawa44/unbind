@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261005.1",
-    "@css-modules-kit/codegen": "^1.4.0",
+    "@css-modules-kit/codegen": "^1.4.1",
     "@hono/vite-build": "^1.11.1",
     "@hono/vite-dev-server": "^0.26.1",
     "@storybook/react-vite": "^10.6.1",
