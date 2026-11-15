@@ -10,7 +10,7 @@ base
 
 - Node.js: 26.13.1
 - TypeScript: 6.0.3
-- React: 19.3.0
+- React: 19.3.1
 - Hono: 4.13.13
 
 Other major libraries
